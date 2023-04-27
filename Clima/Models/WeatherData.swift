@@ -13,9 +13,9 @@ struct WeatherData : Codable {
     let main :  Main
     let weather : [Weather]
     let timezone : Date
+    let sys : System
    
 }
-
 
 struct Main : Codable {
     let temp : Double
@@ -34,7 +34,10 @@ struct Weather : Codable {
         let urlString = "https://openweathermap.org/img/wn/\(icon)@2x.png"
         return URL(string: urlString)!
     }
-    
+}
+
+struct System : Codable {
+    let country : String
 }
 
     

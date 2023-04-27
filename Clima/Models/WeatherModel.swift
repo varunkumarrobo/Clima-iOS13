@@ -16,6 +16,7 @@ struct WeatherModel {
     let description : String
     let icon : String
     let time : Date
+    let countryCode : String
     
     var tempratureString : String {
         return String(format: "%.1f", temp)

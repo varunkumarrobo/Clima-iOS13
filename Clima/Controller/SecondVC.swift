@@ -19,6 +19,7 @@ class SecondVC: UIViewController  {
     var weatherManager = WeatherManager()
     var dataName = ""
     var delegate : passDataToVC!
+    var suggestions : Array = [""]
  
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,21 +28,16 @@ class SecondVC: UIViewController  {
         searchTextField.text = dataName
 
     }
-    
-    @IBAction func backButton(_ sender: UIButton) {
-        delegate.fetchWeatherFromSecondVC(str:
-                                            dataName)
-        navigationController?.popViewController(animated: true)
-    }
-    
-    
 }
 
 //MARK: - UITextFieldDelegate
-extension SecondVC :  UITextFieldDelegate {
+extension SecondVC : UITextFieldDelegate {
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchTextField.endEditing(true)
+        
         print(searchTextField.text!)
+        
         return true
     }
     
@@ -59,6 +55,11 @@ extension SecondVC :  UITextFieldDelegate {
 //             weatherManager.fetchWeather(cityName: dataName)
             print(dataName)
             delegate.fetchWeatherFromSecondVC(str: dataName)
+        }
+        
+        if let suggestions = searchTextField.text{
+                weatherManager.getSuggestions(search: searchTextField.text!)
+            print("suggestions -> \(suggestions)")
         }
         searchTextField.text = ""
     }
