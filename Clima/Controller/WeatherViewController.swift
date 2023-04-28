@@ -16,13 +16,6 @@ protocol WeatherViewControllerDelegate : AnyObject {
 
 class WeatherViewController: UIViewController{
     
-    enum MenuState {
-        case opened
-        case closed
-    }
-    
-//    private var menuState : MenuState = .closed
-    
     var  itemArray = [ WeatherDB ] ()
     
     @IBOutlet weak var conditionImageView: UIImageView!
@@ -41,69 +34,68 @@ class WeatherViewController: UIViewController{
     
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
-    var  secondVC = SecondVC()
+    var secondVC = SecondVC()
     let date = Date();
     let dateFormatter = DateFormatter();
-//    weak var delegate : WeatherViewControllerDelegate?
-//    let menuVC = MenuViewController()
-//    let homeVC = HomeViewController()
+    
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
- 
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-//    var navVC = UINavigationController(rootViewController: WeatherViewController())
-     
-   
+    //    var navVC = UINavigationController(rootViewController: WeatherViewController())
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         print(dataFilePath!)
         
-//        delegate = self
+        //        delegate = self
         weatherManager.delegate = self
         secondVC.delegate = self
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-//        configureItems()
+        //        configureItems()
         addNavBarImage()
         navBarTrans()
         drawerView.isHidden = true
         saveItems()
         
-//        addChildVCs()
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
-        style: .done, target: self, action: #selector(didTapMenuButton))
+                                                           style: .done, target: self, action: #selector(didTapMenuButton))
         
-    
+        
     }
     
-//    private func addChildVCs() {
-//        addChild(menuVC)
-//        view.addSubview(menuVC.view)
-//        menuVC.didMove(toParent: self)
-//
-//        addChild(homeVC)
-//        view.addSubview(homeVC.view)
-//        homeVC.didMove(toParent: self)
-//    }
-
-   
+    //MARK: - DataBase Related Functions
+    
+    func saveItems() {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context, \(error)")
+        }
+    }
+    
+    
+    
+    //MARK: - UI Desgin Related Functions
     @objc func didTapMenuButton(){
         if menuOut == false {
             leading.constant = -250
             trailing.constant = 250
-//            backgroundLeading.constant = 200
-//            backGroundTrailing.constant = -200
+            //            backgroundLeading.constant = 200
+            //            backGroundTrailing.constant = -200
             drawerView.isHidden = false
             menuOut = true
         } else {
             leading.constant = 0
             trailing.constant = 0
-//            backgroundLeading.constant = 0
-//            backGroundTrailing.constant = 0
+            //            backgroundLeading.constant = 0
+            //            backGroundTrailing.constant = 0
             drawerView.isHidden = true
             menuOut = false
         }
@@ -113,36 +105,6 @@ class WeatherViewController: UIViewController{
         } completion: { (animationComplete) in
             print("animation complete")
         }
-
-//        delegate?.didTapMenuButton()
-//        switch  menuState {
-//        case .closed :
-//               //open it
-//            UIView.animate(
-//                withDuration: 0.5,
-//                delay: 0,
-//                usingSpringWithDamping: 0.8, initialSpringVelocity: 0,
-//                options: .curveEaseInOut) {
-//                self.view.frame.origin.x = self.view.frame.size.width - 100
-//            } completion: { [weak self] (done) in
-//                if done {
-//                    self?.menuState = .opened
-//                }
-//            }
-//        case .opened :
-//            //close it
-//            UIView.animate(
-//                withDuration: 0.5,
-//                delay: 0,
-//                usingSpringWithDamping: 0.8, initialSpringVelocity: 0,
-//                options: .curveEaseInOut) {
-//                self.view.frame.origin.x = 0
-//            } completion: { [weak self] (done) in
-//                if done {
-//                    self?.menuState = .closed
-//                }
-//            }
-//        }
         
         print("did tap menu")
     }
@@ -151,34 +113,26 @@ class WeatherViewController: UIViewController{
     func navBarTrans() {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithTransparentBackground()
-                    
+        
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
     }
     
     func addNavBarImage() {
-            let navController = navigationController!
-            let image = UIImage(named: "logo") //Your logo url here
-            let imageView = UIImageView(image: image)
-            let bannerWidth = navController.navigationBar.frame.size.width
-            let bannerHeight = navController.navigationBar.frame.size.height
-            let bannerX = bannerWidth / 3 - (image?.size.width)! / 4
-            let bannerY = bannerHeight / 2 - (image?.size.height)! / 3
-            imageView.frame = CGRect(x: bannerX, y: bannerY, width: bannerWidth, height: bannerHeight)
-            imageView.contentMode = .scaleAspectFit
-            navigationItem.titleView = imageView
-        }
+        let navController = navigationController!
+        let image = UIImage(named: "logo") //Your logo url here
+        let imageView = UIImageView(image: image)
+        let bannerWidth = navController.navigationBar.frame.size.width
+        let bannerHeight = navController.navigationBar.frame.size.height
+        let bannerX = bannerWidth / 3 - (image?.size.width)! / 4
+        let bannerY = bannerHeight / 2 - (image?.size.height)! / 3
+        imageView.frame = CGRect(x: bannerX, y: bannerY, width: bannerWidth, height: bannerHeight)
+        imageView.contentMode = .scaleAspectFit
+        navigationItem.titleView = imageView
+    }
     
-//    private func configureItems() {
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(
-//            image: UIImage(
-//                systemName:  "text.justify"),
-//            style: .done,
-//            target: self,
-//            action: nil
-//        )
-//    }
     
+    //MARK: - Button's Related Functions
     @IBAction func addToFav(_ sender: UIButton) {
         
         let newItem = WeatherDB(context: self.context)
@@ -191,16 +145,8 @@ class WeatherViewController: UIViewController{
             self.itemArray.append(newItem)
         }
         self.saveItems()
-         print("success")
+        print("success")
         
-    }
-    
-    func saveItems() {
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context, \(error)")
-        }
     }
     
     @IBAction func currentLocation(_ sender: UIButton) {
@@ -212,19 +158,13 @@ class WeatherViewController: UIViewController{
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-            if let secondVC = segue.destination as? SecondVC, segue.identifier == "goSearchVC" {
-                // at this moment secondVC did not load its view yet, trying to access it would cause crash
-                // because transferWord tries to set label.text directly, we need to make sure that label
-                // is already set (for experiment you can try comment out next line)
-                secondVC.loadViewIfNeeded()
-                secondVC.delegate = self
-                // but here secondVC exist, so lets call transferWord on it
-                secondVC.dataName = cityLabel.text ?? "NO Name"
-            } 
+        if let secondVC = segue.destination as? SecondVC, segue.identifier == "goSearchVC" {
+            secondVC.loadViewIfNeeded()
+            secondVC.delegate = self
+            secondVC.dataName = cityLabel.text ?? "NO Name"
+        }
     }
-//    func fetchWeatherFromSecondVC(city:String) {
-//        weatherManager.fetchWeather(cityName: city)
-//    }
+    
 }
 
 //MARK:- FetchWeatherFromSecondVC
@@ -244,7 +184,7 @@ extension WeatherViewController : WeatherManagerDelegate {
             print("executed")
             self.temperatureLabel.text = weather.tempratureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
-//            self.imageIcon.image = weather.icon     
+            //            self.imageIcon.image = weather.icon
             self.cityLabel.text = weather.cityName
             self.descriptionLabel.text = weather.description
             self.countryLabel.text = weather.countryCode
@@ -253,10 +193,16 @@ extension WeatherViewController : WeatherManagerDelegate {
             let format = DateFormatter()
             format.timeStyle = .long
             format.dateStyle = .long
-            print(format.string(from: mytime))
-
-            self.timeLabel.text =  String(format.string(from: mytime))
-            
+            //            print(format.string(from: mytime))
+            let timeHere = Date()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "LLLL dd, hh:mm:ss a"
+            dateFormatter.timeZone = TimeZone(secondsFromGMT: Int(mytime.timeIntervalSince1970))
+            //                TimeZone(secondsFromGMT: mytime.timezone_offset) // <-- here
+            let timeThere = dateFormatter.string(from: mytime)
+            print("timeHere: \(timeHere)   timeThere: \(timeThere) \n")
+            self.timeLabel.text =
+                String(format.string(from: timeHere))
             print(weather.timeString)
             print(self.temperatureLabel.text!)
             print(self.descriptionLabel.text!)
@@ -287,6 +233,42 @@ extension WeatherViewController : CLLocationManagerDelegate {
 }
 
 
+//MARK: - Commented Code for some Refernce
+
+
+
+
+
+//        delegate?.didTapMenuButton()
+//        switch  menuState {
+//        case .closed :
+//               //open it
+//            UIView.animate(
+//                withDuration: 0.5,
+//                delay: 0,
+//                usingSpringWithDamping: 0.8, initialSpringVelocity: 0,
+//                options: .curveEaseInOut) {
+//                self.view.frame.origin.x = self.view.frame.size.width - 100
+//            } completion: { [weak self] (done) in
+//                if done {
+//                    self?.menuState = .opened
+//                }
+//            }
+//        case .opened :
+//            //close it
+//            UIView.animate(
+//                withDuration: 0.5,
+//                delay: 0,
+//                usingSpringWithDamping: 0.8, initialSpringVelocity: 0,
+//                options: .curveEaseInOut) {
+//                self.view.frame.origin.x = 0
+//            } completion: { [weak self] (done) in
+//                if done {
+//                    self?.menuState = .closed
+//                }
+//            }
+//        }
+
 //override func viewWillAppear(_ animated: Bool) {
 //    super.viewWillAppear(animated)
 //    self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -299,6 +281,20 @@ extension WeatherViewController : CLLocationManagerDelegate {
 //    self.navigationController?.navigationBar.shadowImage = nil
 //    self.navigationController?.navigationBar.isTranslucent = false
 //}
+
+//    private func configureItems() {
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(
+//            image: UIImage(
+//                systemName:  "text.justify"),
+//            style: .done,
+//            target: self,
+//            action: nil
+//        )
+//    }
+
+//    func fetchWeatherFromSecondVC(city:String) {
+//        weatherManager.fetchWeather(cityName: city)
+//    }
 
 //MARK: - UITextFieldDelegate
 //extension WeatherViewController : UITextFieldDelegate {

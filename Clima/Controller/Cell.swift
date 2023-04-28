@@ -10,7 +10,7 @@ import UIKit
 
 class Cell: UITableViewCell {
     
-//    var weatherManager = WeatherManager()
+    //    var weatherManager = WeatherManager()
     @IBOutlet var cityLabel: UILabel!
     @IBOutlet var countryLabel: UILabel!
     
@@ -23,12 +23,12 @@ class Cell: UITableViewCell {
         countryLabel.text = itemArray.country
     }
     
-    func setDetails(temp: Array<String>,descrip: Array<String>)  {
-//        favImaLabel.image = favImage
+    func setDetails(favImage: UIImage,temp: Array<String>,descrip: Array<String>)  {
+        favImaLabel.image = favImage
         tempLabel.text = temp[0]
         descripLabel.text = descrip[0]
     } 
-
+    
 }
 //MARK: - WeatherManagerDelegate
 //extension Cell : WeatherManagerDelegate {
