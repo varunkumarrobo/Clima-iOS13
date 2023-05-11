@@ -722,7 +722,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_android.png" translatesAutoresizingMaskIntoConstraints="NO" id="Sd2-rd-d2k">
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                             </imageView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="awh-Wj-0P8">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="awh-Wj-0P8">
                                 <rect key="frame" x="16" y="161" width="378" height="665"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <prototypes>
@@ -844,12 +844,13 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="72"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MhT-E8-Uuf">
-                                        <rect key="frame" x="35" y="22" width="30" height="27.5"/>
+                                        <rect key="frame" x="35" y="23.5" width="30" height="25"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="BvA-n8-RQR"/>
                                             <constraint firstAttribute="height" constant="30" id="vNw-3a-5SG"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="arrow.backward.square" catalog="system"/>
+                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" backgroundImage="arrow.left" catalog="system"/>
                                         <connections>
                                             <action selector="backButton:" destination="eso-cf-KBk" eventType="touchUpInside" id="c1A-jC-B4N"/>
                                         </connections>
@@ -911,7 +912,6 @@
     <resources>
         <image name="aqi.low" catalog="system" width="128" height="119"/>
         <image name="aqi.medium" catalog="system" width="128" height="125"/>
-        <image name="arrow.backward.square" catalog="system" width="128" height="114"/>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
         <image name="background" width="662" height="662"/>
         <image name="background_android.png" width="540" height="960"/>
