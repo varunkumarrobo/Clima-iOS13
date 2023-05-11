@@ -22,7 +22,7 @@
 		D8212D8D29ED6DB000015D35 /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8212D8C29ED6DB000015D35 /* WeatherModel.swift */; };
 		D85A354329F80F1500823A80 /* WeatherDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D85A354129F80F1500823A80 /* WeatherDB.xcdatamodeld */; };
 		D85A354729F8220D00823A80 /* background_android.png in Resources */ = {isa = PBXBuildFile; fileRef = D85A354629F8220C00823A80 /* background_android.png */; };
-		D8A99B7E29F297D20022BFF0 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B7D29F297D20022BFF0 /* MenuViewController.swift */; };
+		D887A89C2A0D19AE00810DD7 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D887A89B2A0D19AD00810DD7 /* SearchManager.swift */; };
 		D8A99B8129F2BEF00022BFF0 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */; };
 		D8A99B8429F39E390022BFF0 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */; };
 		D8A99B8729F3A31D0022BFF0 /* RecentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */; };
@@ -47,7 +47,7 @@
 		D8212D8C29ED6DB000015D35 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		D85A354229F80F1500823A80 /* WeatherDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherDB.xcdatamodel; sourceTree = "<group>"; };
 		D85A354629F8220C00823A80 /* background_android.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_android.png; sourceTree = "<group>"; };
-		D8A99B7D29F297D20022BFF0 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		D887A89B2A0D19AD00810DD7 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentVC.swift; sourceTree = "<group>"; };
@@ -127,6 +127,7 @@
 				D8212D8929ED63EF00015D35 /* WeatherData.swift */,
 				D8212D8C29ED6DB000015D35 /* WeatherModel.swift */,
 				D85A354129F80F1500823A80 /* WeatherDB.xcdatamodeld */,
+				D887A89B2A0D19AD00810DD7 /* SearchManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -134,7 +135,6 @@
 		D8719D1729F1364000D70E1E /* Drawer */ = {
 			isa = PBXGroup;
 			children = (
-				D8A99B7D29F297D20022BFF0 /* MenuViewController.swift */,
 				D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */,
 				D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */,
 			);
@@ -216,6 +216,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADAA27B5231BBFAF00365194 /* WeatherViewController.swift in Sources */,
+				D887A89C2A0D19AE00810DD7 /* SearchManager.swift in Sources */,
 				ADAA27B1231BBFAF00365194 /* AppDelegate.swift in Sources */,
 				D8A99B8429F39E390022BFF0 /* ContainerViewController.swift in Sources */,
 				D8212D8629ED46D400015D35 /* WeatherManager.swift in Sources */,
@@ -226,7 +227,6 @@
 				D8212D8A29ED63EF00015D35 /* WeatherData.swift in Sources */,
 				D8A99B8A29F3A32D0022BFF0 /* FavVC.swift in Sources */,
 				ADAA27B3231BBFAF00365194 /* SceneDelegate.swift in Sources */,
-				D8A99B7E29F297D20022BFF0 /* MenuViewController.swift in Sources */,
 				D8A99B8729F3A31D0022BFF0 /* RecentVC.swift in Sources */,
 				D85A354329F80F1500823A80 /* WeatherDB.xcdatamodeld in Sources */,
 			);

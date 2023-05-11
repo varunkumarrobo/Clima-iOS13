@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Clima
-//
-//  Created by Angela Yu on 01/09/2019.
-//  Copyright © 2019 App Brewery. All rights reserved.
-//
 
 import UIKit
 import CoreLocation
@@ -18,19 +11,38 @@ class WeatherViewController: UIViewController{
     
     var  itemArray = [ WeatherDB ] ()
     
+    let countryUrl = "https://api.weatherapi.com/v1/current.json?key=5c3bf1f114ef4babb2573540231105&aqi=no"
+    
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
-    @IBOutlet weak var cityLabel: UILabel! 
-    @IBOutlet var countryLabel: UILabel!
+    @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var imageIcon: UIImageView!
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var leading: NSLayoutConstraint!
     @IBOutlet var trailing: NSLayoutConstraint!
     @IBOutlet var backgroundLeading: NSLayoutConstraint!
-    @IBOutlet var drawerView: UIView!
     @IBOutlet var backGroundTrailing: NSLayoutConstraint!
+    @IBOutlet var segmentedButtonControl: UISegmentedControl!
+    @IBOutlet var minMaxLabel: UILabel!
+    @IBOutlet var visibilityLabel: UILabel!
+    @IBOutlet var humidityLabel: UILabel!
+    @IBOutlet var feelsLikeLabel: UILabel!
+    
+    @IBOutlet var countryLabelSec: UILabel!
+    
+    var countryLabel = ""
     var menuOut = false
+    var isFavourite = false
+    var fahrenheitTemp = 0.0
+    
+    var drawerViewCopy = UIView()
+    var drawerBackgroundView = UIView()
+    var drawerStatus = false
+    
+    var homeButton = UIButton()
+    var favouriteButton = UIButton()
+    var recentButton = UIButton()
     
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
@@ -38,13 +50,9 @@ class WeatherViewController: UIViewController{
     let date = Date();
     let dateFormatter = DateFormatter();
     
-    
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    //    var navVC = UINavigationController(rootViewController: WeatherViewController())
-    
     
     
     override func viewDidLoad() {
@@ -52,22 +60,56 @@ class WeatherViewController: UIViewController{
         
         print(dataFilePath!)
         
-        //        delegate = self
         weatherManager.delegate = self
+        weatherManager.delegateSec = self
+        
         secondVC.delegate = self
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-        //        configureItems()
-        addNavBarImage()
-        navBarTrans()
-        drawerView.isHidden = true
+        
         saveItems()
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
-                                                           style: .done, target: self, action: #selector(didTapMenuButton))
+        loadDrawerBackground()
+        drawerViewCopy.layer.zPosition = 1
+        loadDrawer()
+        print("viewDidLoad End")
+        segmentedControl()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateDrawerUI()
         
+    }
+    
+    //MARK:- SegmentedControl part
+    @IBAction func segmentedOutput(_ sender: UISegmentedControl) {
+        
+        let celsiusTemp = (fahrenheitTemp - 32) * 5/9
+        print(celsiusTemp)
+        if segmentedButtonControl.selectedSegmentIndex == 0 {
+            temperatureLabel.text = String(format: "%.0f", celsiusTemp)
+        } else {
+            temperatureLabel.text = String(format: "%.0f", fahrenheitTemp)
+        }
+        
+    }
+    
+    func segmentedControl()  {
+        segmentedButtonControl.backgroundColor = .clear
+        segmentedButtonControl.tintColor = .clear
+        segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
+        segmentedButtonControl.layer.cornerRadius = 0
+        segmentedButtonControl.layer.borderWidth = 2
+        segmentedButtonControl.backgroundColor = .clear
+        segmentedButtonControl.setTitleTextAttributes([
+          NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+          NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
+        segmentedButtonControl.setTitleTextAttributes([
+       NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+       NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
     }
     
     //MARK: - DataBase Related Functions
@@ -80,55 +122,44 @@ class WeatherViewController: UIViewController{
         }
     }
     
-    
-    
     //MARK: - UI Desgin Related Functions
-    @objc func didTapMenuButton(){
-        if menuOut == false {
-            leading.constant = -250
-            trailing.constant = 250
-            //            backgroundLeading.constant = 200
-            //            backGroundTrailing.constant = -200
-            drawerView.isHidden = false
-            menuOut = true
-        } else {
-            leading.constant = 0
-            trailing.constant = 0
-            //            backgroundLeading.constant = 0
-            //            backGroundTrailing.constant = 0
-            drawerView.isHidden = true
-            menuOut = false
-        }
-        
-        UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn) {
-            self.view.layoutIfNeeded()
-        } completion: { (animationComplete) in
-            print("animation complete")
-        }
-        
+     func didTapMenuButton(){
+        print("Pressed")
+        drawerStatus = !drawerStatus
+        updateDrawerUI()
         print("did tap menu")
     }
     
-    
-    func navBarTrans() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithTransparentBackground()
+    func updateDrawerUI() {
+        UIView.animate(withDuration: 0.75) {
+            self.drawerViewCopy.frame.origin.x = self.drawerStatus ? 0 : -self.drawerViewCopy.frame.width
+            self.drawerBackgroundView.alpha = self.drawerStatus ? 0.6: 0
+            print("animation complete")
+        }
         
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
     }
     
-    func addNavBarImage() {
-        let navController = navigationController!
-        let image = UIImage(named: "logo") //Your logo url here
-        let imageView = UIImageView(image: image)
-        let bannerWidth = navController.navigationBar.frame.size.width
-        let bannerHeight = navController.navigationBar.frame.size.height
-        let bannerX = bannerWidth / 3 - (image?.size.width)! / 4
-        let bannerY = bannerHeight / 2 - (image?.size.height)! / 3
-        imageView.frame = CGRect(x: bannerX, y: bannerY, width: bannerWidth, height: bannerHeight)
-        imageView.contentMode = .scaleAspectFit
-        navigationItem.titleView = imageView
+    @objc func handleBackgroundTap() {
+        drawerStatus = false
+        updateDrawerUI()
+    }
+    
+    @objc func homeButtonTapped() { print("homeButtonTapped") }
+    @objc func favouriteButtonTapped() {
+        performSegue(withIdentifier: "goToFavourties", sender: navigationController)
+        print("favouriteButtonTapped") }
+    @objc func recentButtonTapped() { print("recentButtonTapped") }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisappear")
+        drawerStatus = false
+        updateDrawerUI()
+        
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("viewWillDisappear")
+        
     }
     
     
@@ -137,16 +168,38 @@ class WeatherViewController: UIViewController{
         
         let newItem = WeatherDB(context: self.context)
         newItem.place = cityLabel.text ?? "Udupi"
-        newItem.country = countryLabel.text ?? "India"
+        newItem.country = countryLabelSec.text ?? "India"
         
-        if cityLabel.text == "" {
-            print("empty")
+        isFavourite = !isFavourite
+        if isFavourite {
+            sender.setTitle("Remove from favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
+//                context.delete(itemArray[i])
+//            }
+            print("Deleted")
         } else {
+            sender.setTitle("Add to favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart"), for: .normal)
             self.itemArray.append(newItem)
+            print("Sucess")
         }
+        
+        
+//        if cityLabel.text == "" {
+//            print("empty")
+//        } else {
+//            self.itemArray.append(newItem)
+//        }
+        
         self.saveItems()
         print("success")
         
+    }
+    
+    @IBAction func drawerButton(_ sender: UIButton) {
+        print("drawer Button pressed")
+        didTapMenuButton()
     }
     
     @IBAction func currentLocation(_ sender: UIButton) {
@@ -156,13 +209,76 @@ class WeatherViewController: UIViewController{
     @IBAction func searchButton(_ sender: UIButton) {
         performSegue(withIdentifier: "goSearchVC", sender: navigationController)
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let secondVC = segue.destination as? SecondVC, segue.identifier == "goSearchVC" {
             secondVC.loadViewIfNeeded()
             secondVC.delegate = self
             secondVC.dataName = cityLabel.text ?? "NO Name"
         }
+    }
+    
+    //MARK:- LoadDrawer
+    func loadDrawer() {
+        view.addSubview(drawerViewCopy)
+        drawerViewCopy.backgroundColor = .white
+        drawerViewCopy.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            drawerViewCopy.trailingAnchor.constraint(equalTo: view.leadingAnchor),
+            drawerViewCopy.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            drawerViewCopy.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            drawerViewCopy.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
+        ])
+        
+        drawerViewCopy.addSubview(homeButton)
+        homeButton.addTarget(self, action: #selector(homeButtonTapped), for: .touchUpInside)
+        drawerViewCopy.addSubview(favouriteButton)
+        favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
+        drawerViewCopy.addSubview(recentButton)
+        recentButton.addTarget(self, action: #selector(recentButtonTapped), for: .touchUpInside)
+        
+        homeButton.setTitle("Home", for: .normal)
+        homeButton.tintColor = .black
+        homeButton.setTitleColor(.black, for: .normal)
+        homeButton.showsTouchWhenHighlighted = true
+        
+        favouriteButton.setTitle("Favourite", for: .normal)
+        favouriteButton.tintColor = .black
+        favouriteButton.setTitleColor(.black, for: .normal)
+        favouriteButton.showsTouchWhenHighlighted = true
+        
+        recentButton.setTitle("Recent", for: .normal)
+        recentButton.tintColor = .black
+        recentButton.setTitleColor(.black, for: .normal)
+        homeButton.showsTouchWhenHighlighted = true
+        
+        homeButton.translatesAutoresizingMaskIntoConstraints = false
+        favouriteButton.translatesAutoresizingMaskIntoConstraints = false
+        recentButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            homeButton.leadingAnchor.constraint(equalTo: drawerViewCopy.leadingAnchor, constant: 50),
+            homeButton.topAnchor.constraint(equalTo: drawerViewCopy.topAnchor, constant: 100),
+            favouriteButton.leadingAnchor.constraint(equalTo: homeButton.leadingAnchor),
+            favouriteButton.topAnchor.constraint(equalTo: homeButton.topAnchor, constant: 40),
+            recentButton.leadingAnchor.constraint(equalTo: favouriteButton.leadingAnchor),
+            recentButton.topAnchor.constraint(equalTo: favouriteButton.topAnchor, constant: 40),
+        ])
+        
+    }
+    
+    func loadDrawerBackground() {
+        view.addSubview(drawerBackgroundView)
+        drawerBackgroundView.backgroundColor = .black
+        drawerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+        drawerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        drawerBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        drawerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        drawerBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor)
+        ])
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap));  drawerBackgroundView.addGestureRecognizer(tapGestureRecognizer)
+        
     }
     
 }
@@ -172,37 +288,41 @@ class WeatherViewController: UIViewController{
 extension WeatherViewController : passDataToVC {
     func fetchWeatherFromSecondVC(str: String) {
         weatherManager.fetchWeather(cityName: str)
+        weatherManager.fetchWeather(countryName: str)
         print("Updated")
     } 
     
 }
 
+
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController : WeatherManagerDelegate {
+     
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)  {
         DispatchQueue.main.async {
             print("executed")
             self.temperatureLabel.text = weather.tempratureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
-            //            self.imageIcon.image = weather.icon
-            self.cityLabel.text = weather.cityName
+            self.cityLabel.text = "\(weather.cityName),\(self.countryLabel)"
             self.descriptionLabel.text = weather.description
-            self.countryLabel.text = weather.countryCode
-            
+            self.minMaxLabel.text = "\(weather.temp_min) - \(weather.temp_max)"
+            self.humidityLabel.text = String(weather.humidity)
+            self.feelsLikeLabel.text = String(weather.feels_like)
+            self.visibilityLabel.text = String(weather.visibility)
             let mytime = weather.timeString
             let format = DateFormatter()
             format.timeStyle = .long
             format.dateStyle = .long
-            //            print(format.string(from: mytime))
             let timeHere = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "LLLL dd, hh:mm:ss a"
             dateFormatter.timeZone = TimeZone(secondsFromGMT: Int(mytime.timeIntervalSince1970))
-            //                TimeZone(secondsFromGMT: mytime.timezone_offset) // <-- here
             let timeThere = dateFormatter.string(from: mytime)
             print("timeHere: \(timeHere)   timeThere: \(timeThere) \n")
             self.timeLabel.text =
                 String(format.string(from: timeHere))
+            self.fahrenheitTemp = (weather.temp * 9/5) + 32
+            print("fahrenheitTemp : -  \(self.fahrenheitTemp)")
             print(weather.timeString)
             print(self.temperatureLabel.text!)
             print(self.descriptionLabel.text!)
@@ -210,8 +330,24 @@ extension WeatherViewController : WeatherManagerDelegate {
     }
     
     func didFailError(error: Error) {
-        print("edfgoyuregerp \(error)")
+        print("error from didUpdateWeather \(error)")
     }
+}
+
+extension WeatherViewController : CountryDetailsDelegate {
+
+    func didUpdateDetails(_ weatherManager: WeatherManager, details: CountryModel) {
+        DispatchQueue.main.async {
+            self.countryLabelSec.text = details.country
+//            self.countryLabel = details.country
+            print(details.country)
+        }
+    }
+    
+    func didFailDetailsError(error: Error) {
+        print("error from didUpdateDetails \(error)")
+    }
+    
 }
 
 
@@ -224,6 +360,8 @@ extension WeatherViewController : CLLocationManagerDelegate {
             let lat = location.coordinate.latitude
             let long = location.coordinate.longitude
             weatherManager.fetchWeather(latitude: lat, longitude: long)
+            
+            
         }
     }
     
@@ -233,9 +371,30 @@ extension WeatherViewController : CLLocationManagerDelegate {
 }
 
 
+
+
+
 //MARK: - Commented Code for some Refernce
 
-
+//func navBarTrans() {
+//    let navBarAppearance = UINavigationBarAppearance()
+//    navBarAppearance.configureWithTransparentBackground()
+//    navigationController?.navigationBar.standardAppearance = navBarAppearance
+//    navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+//}
+//
+//func addNavBarImage() {
+//    let navController = navigationController!
+//    let image = UIImage(named: "logo") //Your logo url here
+//    let imageView = UIImageView(image: image)
+//    let bannerWidth = navController.navigationBar.frame.size.width
+//    let bannerHeight = navController.navigationBar.frame.size.height
+//    let bannerX = bannerWidth / 3 - (image?.size.width)! / 4
+//    let bannerY = bannerHeight / 2 - (image?.size.height)! / 3
+//    imageView.frame = CGRect(x: bannerX, y: bannerY, width: bannerWidth, height: bannerHeight)
+//    imageView.contentMode = .scaleAspectFit
+//    navigationItem.titleView = imageView
+//}
 
 
 
@@ -327,3 +486,47 @@ extension WeatherViewController : CLLocationManagerDelegate {
 //        searchTextField.text = ""
 //    }
 //}
+
+
+//MARK:- CollectionView
+//extension WeatherViewController : UICollectionViewDelegate , UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return 20
+//
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! MyCollectionCell
+//
+//        cell.imageView.image = UIImage(systemName: "thermometer")
+//        cell.labelOne.text = "20.25"
+//        cell.labelTwo.text = "14.57"
+//
+//        return cell
+//    }
+//
+//
+//    }
+
+//        if menuOut == false {
+//            leading.constant = -250
+//            trailing.constant = 250
+//            //            backgroundLeading.constant = 200
+//            //            backGroundTrailing.constant = -200
+//            drawerView.isHidden = false
+//            menuOut = true
+//        } else {
+//            leading.constant = 0
+//            trailing.constant = 0
+//            //            backgroundLeading.constant = 0
+//            //            backGroundTrailing.constant = 0
+//            drawerView.isHidden = true
+//            menuOut = false
+//        }
+
+//        UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn) {
+//            self.view.layoutIfNeeded()
+//        } completion: { (animationComplete) in
+//            print("animation complete")
+//        }

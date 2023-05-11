@@ -17,9 +17,14 @@ struct WeatherModel {
     let icon : String
     let time : Date
     let countryCode : String
+    let feels_like : Double
+    let temp_min : Double
+    let temp_max : Double
+    let humidity : Int
+    let visibility : Int
     
     var tempratureString : String {
-        return String(format: "%.1f", temp)
+        return String(format: "%.0f", temp)
     }
     
     var timeString : Date {
@@ -47,5 +52,23 @@ struct WeatherModel {
                 }
     }
     
-     
 }
+
+
+struct CountryModel {
+    let country : String
+}
+
+struct LocationforSearch {
+    let cityName : String
+    let lat : Double
+    let lon : Double
+    
+    init(city : String, latitude : Double, longitude : Double) {
+        self.cityName = city
+        self.lat = latitude
+        self.lon = longitude
+    }
+}
+
+

@@ -44,6 +44,12 @@ class FavVC: UIViewController {
         tableView.tableFooterView = UIView(frame: .zero)
     }
     
+    
+    
+    @IBAction func backButton(_ sender: UIButton) {
+        navigationController?.popViewController(animated: true)
+    }
+    
     func updateCities()  {
         citiesAdded.text = "\(itemArray.count) City added as favourite"
     }
@@ -89,6 +95,7 @@ class FavVC: UIViewController {
 
 //MARK: - WeatherManagerDelegate
 extension FavVC : WeatherManagerDelegate {
+  
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)  {
         DispatchQueue.main.async {
             print("fav-executed")
