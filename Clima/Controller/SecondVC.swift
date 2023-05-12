@@ -37,7 +37,6 @@ class SecondVC: UIViewController {
         searchManager.delegate = self
         searchTextField.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
         addTopAndBottomBorders()
-        
         tableView.tableFooterView = UIView(frame: .zero)
     }
     

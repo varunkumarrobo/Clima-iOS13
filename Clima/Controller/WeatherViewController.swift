@@ -156,156 +156,63 @@ class WeatherViewController: UIViewController{
         updateDrawerUI()
     }
     
-    @objc func homeButtonTapped() { print("homeButtonTapped") }
+    @objc func homeButtonTapped() {
+        drawerStatus = false
+        updateDrawerUI()
+        print("homeButtonTapped") }
+    
     @objc func favouriteButtonTapped() {
-        performSegue(withIdentifier: "goToFavourties", sender: navigationController)
-        print("favouriteButtonTapped") }
-    @objc func recentButtonTapped() { print("recentButtonTapped") }
+        performSegue(withIdentifier: "goToFavourties", sender: self)
+        print("favouriteButtonTapped")
+    }
+    
+    @objc func recentButtonTapped() {
+        performSegue(withIdentifier: "goToRecent", sender: self)
+        print("recentButtonTapped")
+    }
+    
     
     //MARK: - Button's Related Functions
     @IBAction func addToFav(_ sender: UIButton) {
         
         let newItem = WeatherDB(context: self.context)
-        newItem.place = cityLabel.text ?? "Udupi"
-        newItem.country = countryLabelSec.text ?? "India"
+        newItem.place = cityLabel.text!
+        newItem.country = countryLabelSec.text!
         
         isFavourite = !isFavourite
-        if isFavourite {
-            // Item already exists, delete it
+        if !isFavourite {
+            // Item doesn't exist, add it
             sender.setTitle("Add to favourite", for: .normal)
             sender.setImage(UIImage(systemName: "heart"), for: .normal)
+            if isFavItem(cityName: newItem.place!, country: newItem.country!, itemArray: itemArray){
+                print("already Added")
+            } else {
+                itemArray.append(newItem)
+                saveItems()
+                print("Item added to favorites")
+            }
+        } else {
+            // Item already exists, delete it
+            sender.setTitle("Remove from favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
             if let index = favoriteItems.lastIndex(of: newItem) {
                 favoriteItems.remove(at: index)
                 itemArray.remove(at: index)
+                context.delete(favoriteItems.last!)
                 context.delete(itemArray.last!)
+                saveItems()
+                print("Item removed from favorites")
             }
-            context.delete(newItem)
-            saveItems()
-            print("Item removed from favorites")
-        } else {
-            // Item doesn't exist, add it
-            sender.setTitle("Remove from favourite", for: .normal)
-            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            
-            favoriteItems.append(newItem)
-            saveItems()
-            print("Item added to favorites")
         }
-        
-        //        isFavourite.toggle()
-        //        if favoriteItems.contains(newItem) {
-        //                // Item already exists, delete it
-        //                sender.setTitle("Add to favorites", for: .normal)
-        //                sender.setImage(UIImage(systemName: "heart"), for: .normal)
-        //                if let index = favoriteItems.firstIndex(of: newItem) {
-        //                    favoriteItems.remove(at: index)
-        //                }
-        //                context.delete(newItem)
-        //                saveItems()
-        //                print("Item removed from favorites")
-        //            } else {
-        //                // Item doesn't exist, add it
-        //                sender.setTitle("Remove from favorites", for: .normal)
-        //                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        //                favoriteItems.append(newItem)
-        //                saveItems()
-        //                print("Item added to favorites")
-        //            }
-        
-        //        func addFavorite() {
-        //            // Execute an SQL INSERT statement to add the item as a favorite
-        //            sender.setTitle("Remove from favourite", for: .normal)
-        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        //            if let index = favoriteItems.firstIndex(of: newItem) {
-        //                        favoriteItems.remove(at: index)
-        //                    }
-        //            self.itemArray.append(newItem)
-        //            self.saveItems()
-        //            print("Success")
-        //            // Execute the SQL statement with your SQLite database connection
-        //            // ...
-        //        }
-        //
-        //        func deleteFavorite() {
-        //            // Execute an SQL DELETE statement to remove the item from favorites
-        //            sender.setTitle("Add to favourite", for: .normal)
-        //            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-        //            if let lastItem = itemArray.last {
-        //                context.delete(lastItem)
-        //                self.itemArray.removeLast()
-        //            }
-        //            print("Deleted")
-        //            // Execute the SQL statement with your SQLite database connection
-        //            // ...
-        //        }
-        //
-        //        func checkIfFavorite() -> Bool {
-        //            // Execute an SQL SELECT statement to check if the item is already a favorite
-        //            if itemArray.contains(newItem) {
-        //                return true
-        //            } else {
-        //                return false
-        //            }
-        //            // Execute the SQL statement with your SQLite database connection
-        //            // ...
-        //            // Check the result of the SELECT query to determine if the item is a favorite
-        //            // Return true if the item is a favorite, false otherwise
-        //        }
-        //
-        //        isFavourite.toggle()
-        //
-        //        if isFavourite {
-        //            sender.setTitle("Remove from favourite", for: .normal)
-        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        //            deleteFavorite()
-        //            print("Deleted")
-        //        } else {
-        //            sender.setTitle("Add to favourite", for: .normal)
-        //            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-        //            addFavorite()
-        //            print("Success")
-        //        }
-        
-        //        let isFavorite = checkIfFavorite()
-        //          isFavorite ? deleteFavorite() : addFavorite()
-        
-        //        if cityLabel.text == "" {
-        //            print("empty")
-        //        } else {
-        //            self.itemArray.append(newItem)
-        //        }
-        
-        //        func deleteFavorite(_ itemId: Array<Any>) {
-        //            // Execute an SQL DELETE statement to remove the item from favorites
-        //            sender.setTitle("Remove from favourite", for: .normal)
-        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        //            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
-        //                context.delete(itemArray[i])
-        //                self.itemArray.removeLast()
-        //            }
-        //            print("Deleted")
-        //            // Execute the SQL statement with your SQLite database connection
-        //            // ...
-        //        }
-        
-        //                        isFavourite = !isFavourite
-        //                        if isFavourite {
-        //                            sender.setTitle("Remove from favourite", for: .normal)
-        //                            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        //                            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
-        //                                context.delete(itemArray[i])
-        //                                itemArray.removeLast()
-        //                            }
-        //                            print("Deleted")
-        //                        } else {
-        //                            sender.setTitle("Add to favourite", for: .normal)
-        //                            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-        //                            self.itemArray.append(newItem)
-        //                            print("Sucess")
-        //                        }
-        
-        //        self.saveItems()
-        //        print("success")
+    }
+    
+    func isFavItem(cityName: String,country: String,itemArray: Array<WeatherDB>) -> Bool {
+        for i in itemArray {
+            if i.place?.lowercased() == cityName.lowercased() {
+                return true
+            }
+        }
+        return false
     }
     
     func didTapMenuButton(){
@@ -334,6 +241,16 @@ class WeatherViewController: UIViewController{
             secondVC.loadViewIfNeeded()
             secondVC.delegate = self
             secondVC.dataName = cityLabel.text ?? "NO Name"
+        } else if segue.identifier == "goToFavourties" {
+            if let destinationVC = segue.destination as? FavVC {
+                destinationVC.isFavourtie = true
+                print("favourite ")
+            }
+        } else if segue.identifier == "goToRecent" {
+            if let destinationVC = segue.destination as? FavVC {
+                destinationVC.isFavourtie = false
+                print("Recent Search")
+            }
         }
     }
     
@@ -635,3 +552,119 @@ extension WeatherViewController : CLLocationManagerDelegate {
 //        } completion: { (animationComplete) in
 //            print("animation complete")
 //        }
+
+
+//        isFavourite.toggle()
+//        if favoriteItems.contains(newItem) {
+//                // Item already exists, delete it
+//                sender.setTitle("Add to favorites", for: .normal)
+//                sender.setImage(UIImage(systemName: "heart"), for: .normal)
+//                if let index = favoriteItems.firstIndex(of: newItem) {
+//                    favoriteItems.remove(at: index)
+//                }
+//                context.delete(newItem)
+//                saveItems()
+//                print("Item removed from favorites")
+//            } else {
+//                // Item doesn't exist, add it
+//                sender.setTitle("Remove from favorites", for: .normal)
+//                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//                favoriteItems.append(newItem)
+//                saveItems()
+//                print("Item added to favorites")
+//            }
+
+//        func addFavorite() {
+//            // Execute an SQL INSERT statement to add the item as a favorite
+//            sender.setTitle("Remove from favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            if let index = favoriteItems.firstIndex(of: newItem) {
+//                        favoriteItems.remove(at: index)
+//                    }
+//            self.itemArray.append(newItem)
+//            self.saveItems()
+//            print("Success")
+//            // Execute the SQL statement with your SQLite database connection
+//            // ...
+//        }
+//
+//        func deleteFavorite() {
+//            // Execute an SQL DELETE statement to remove the item from favorites
+//            sender.setTitle("Add to favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+//            if let lastItem = itemArray.last {
+//                context.delete(lastItem)
+//                self.itemArray.removeLast()
+//            }
+//            print("Deleted")
+//            // Execute the SQL statement with your SQLite database connection
+//            // ...
+//        }
+//
+//        func checkIfFavorite() -> Bool {
+//            // Execute an SQL SELECT statement to check if the item is already a favorite
+//            if itemArray.contains(newItem) {
+//                return true
+//            } else {
+//                return false
+//            }
+//            // Execute the SQL statement with your SQLite database connection
+//            // ...
+//            // Check the result of the SELECT query to determine if the item is a favorite
+//            // Return true if the item is a favorite, false otherwise
+//        }
+//
+//        isFavourite.toggle()
+//
+//        if isFavourite {
+//            sender.setTitle("Remove from favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            deleteFavorite()
+//            print("Deleted")
+//        } else {
+//            sender.setTitle("Add to favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+//            addFavorite()
+//            print("Success")
+//        }
+
+//        let isFavorite = checkIfFavorite()
+//          isFavorite ? deleteFavorite() : addFavorite()
+
+//        if cityLabel.text == "" {
+//            print("empty")
+//        } else {
+//            self.itemArray.append(newItem)
+//        }
+
+//        func deleteFavorite(_ itemId: Array<Any>) {
+//            // Execute an SQL DELETE statement to remove the item from favorites
+//            sender.setTitle("Remove from favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
+//                context.delete(itemArray[i])
+//                self.itemArray.removeLast()
+//            }
+//            print("Deleted")
+//            // Execute the SQL statement with your SQLite database connection
+//            // ...
+//        }
+
+//                        isFavourite = !isFavourite
+//                        if isFavourite {
+//                            sender.setTitle("Remove from favourite", for: .normal)
+//                            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//                            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
+//                                context.delete(itemArray[i])
+//                                itemArray.removeLast()
+//                            }
+//                            print("Deleted")
+//                        } else {
+//                            sender.setTitle("Add to favourite", for: .normal)
+//                            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+//                            self.itemArray.append(newItem)
+//                            print("Sucess")
+//                        }
+
+//        self.saveItems()
+//        print("success")

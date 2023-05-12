@@ -11,29 +11,34 @@ import CoreData
 
 
 
-class FavVC: UIViewController {
+class FavVC : UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var citiesAdded: UILabel!
     @IBOutlet var numberOfCitisView: UIStackView!
     @IBOutlet var toShowNothing: UIImageView!
     @IBOutlet var toShowNothinglabel: UILabel!
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var removeButtonText: UIButton!
+    
+    var isFavourtie : Bool!
     
     var weatherManager = WeatherManager()
-    
     var imageString = ""
     var tempString = ""
     var descripString = ""
     
     var  itemArray = [ WeatherDB ] ()
-    
+    var locations = [LocationforSearch]()
+    var searchManager = SearchManager()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         weatherManager.delegate = self
-        title = "Favorites"
+        searchManager.delegate = self
+        titleLabel.text = isFavourtie ? "Favourties" : "Recent Search"
         loadItems()
         for i in 0 ..< itemArray.count {
             weatherManager.fetchWeather(cityName: itemArray[i].place ?? "London")
@@ -41,20 +46,24 @@ class FavVC: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         updateCities()
-        tableView.tableFooterView = UIView(frame: .zero)
-        tableView.backgroundColor = UIColor.clear
-        tableView.backgroundView = nil
-        
-        tableView.separatorStyle = .singleLine
-        tableView.separatorColor = UIColor.systemBackground
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+        tableViewSetUp()
         emptyView()
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
-        tableView.backgroundColor = UIColor.clear
+//        tableView.backgroundColor = UIColor.clear
 //        toShowNothing.isHidden = false
+        removeButtonText.setTitle(isFavourtie ? "Remove All" : "Clear All", for: .normal)
+    }
+    
+    func tableViewSetUp() {
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.backgroundColor = UIColor.clear
+        tableView.backgroundView = nil
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor.systemBackground
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
     }
     
     func emptyView()  {
@@ -78,10 +87,10 @@ class FavVC: UIViewController {
     func updateCities()  {
         citiesAdded.text = ""
         if itemArray.count == 1 {
-            citiesAdded.text =      "\(itemArray.count) City added as favourite"
+            citiesAdded.text =  isFavourtie ? "\(itemArray.count) City added as favourite" : "You recently searched for"
         }
         if itemArray.count > 1 {
-            citiesAdded.text =   "\(itemArray.count) Citie's added as favourite"
+            citiesAdded.text = isFavourtie ? "\(itemArray.count) Citie's added as favourite" : "You recently searched for"
         }
     }
     
@@ -97,10 +106,11 @@ class FavVC: UIViewController {
         
     }
     
-  
     @IBAction func deleteFavs(_ sender: UIButton) {
         
     }
+    
+    //MARK: - Load Items From DataBase
     
     func loadItems(with request : NSFetchRequest<WeatherDB> =  WeatherDB.fetchRequest() ) {
         
@@ -128,6 +138,28 @@ class FavVC: UIViewController {
     
 }
 
+//MARK:- FetchWeatherFromSearchVC
+
+extension FavVC : passDataToVC {
+    func fetchWeatherFromSecondVC(str: String) {
+        weatherManager.fetchWeather(cityName: str)
+        weatherManager.fetchWeather(countryName: str)
+        print("Updated")
+    }
+}
+
+//MARK:- SearchManagerDelegate
+extension FavVC : SearchManagerDelegate{
+    func updateTableView(locationList: [LocationforSearch]) {
+        DispatchQueue.main.async{
+            [self] in locations = locationList
+            tableView.reloadData()
+        }
+    }
+    
+}
+
+
 //MARK: - WeatherManagerDelegate
 extension FavVC : WeatherManagerDelegate {
   
@@ -137,7 +169,6 @@ extension FavVC : WeatherManagerDelegate {
             self.tempString = weather.tempratureString
             self.imageString = weather.conditionName
             self.descripString = weather.description
-            
             print(self.tempString)
             print(self.descripString)
         }
@@ -154,7 +185,7 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return itemArray.count
+        return isFavourtie ? itemArray.count : locations.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

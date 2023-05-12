@@ -114,7 +114,7 @@
                                                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="India" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0zA-xO-PMy">
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="India" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0zA-xO-PMy">
                                                                         <rect key="frame" x="113" y="0.0" width="105" height="36"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -512,7 +512,7 @@
                         <outlet property="visibilityLabel" destination="cdn-dw-sHY" id="tBx-ao-y1U"/>
                         <segue destination="STG-5l-o3x" kind="show" identifier="goSearchVC" id="Zcv-TW-wJq"/>
                         <segue destination="eso-cf-KBk" kind="show" identifier="goToFavourties" id="fAh-JE-xA5"/>
-                        <segue destination="Ne9-UN-aJb" kind="show" id="MhA-1P-VdW"/>
+                        <segue destination="eso-cf-KBk" kind="show" identifier="goToRecent" id="46o-iT-nVn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -654,66 +654,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tYT-ri-K2J" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1037.68115942029" y="117.85714285714285"/>
-        </scene>
-        <!--Container View Controller-->
-        <scene sceneID="RXS-U2-9R7">
-            <objects>
-                <viewController id="87i-Xf-Ff4" customClass="ContainerViewController" customModule="Clima" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="qAz-2I-m39">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="phk-gt-IXS">
-                                <rect key="frame" x="70" y="94" width="50" height="34"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Home"/>
-                                <connections>
-                                    <action selector="homePressed:" destination="87i-Xf-Ff4" eventType="touchUpInside" id="ykG-cq-8h7"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LbA-xb-aka">
-                                <rect key="frame" x="70" y="144" width="88" height="34"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Favourites"/>
-                                <connections>
-                                    <action selector="favPressed:" destination="87i-Xf-Ff4" eventType="touchUpInside" id="yqx-ck-Kpo"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U1B-Ml-8FH">
-                                <rect key="frame" x="70" y="194" width="122" height="34"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Recent Search"/>
-                                <connections>
-                                    <action selector="recentPressed:" destination="87i-Xf-Ff4" eventType="touchUpInside" id="JeL-lJ-Qbo"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="kip-GN-Qzo"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="U1B-Ml-8FH" firstAttribute="top" secondItem="LbA-xb-aka" secondAttribute="topMargin" constant="42" id="0Vh-BA-M0H"/>
-                            <constraint firstItem="LbA-xb-aka" firstAttribute="leading" secondItem="phk-gt-IXS" secondAttribute="leadingMargin" constant="-8" id="Ahj-lM-3Wv"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="phk-gt-IXS" secondAttribute="trailing" constant="20" symbolic="YES" id="HIZ-uc-LwP"/>
-                            <constraint firstItem="LbA-xb-aka" firstAttribute="top" secondItem="phk-gt-IXS" secondAttribute="topMargin" constant="42" id="Tvo-Oy-AHu"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="U1B-Ml-8FH" secondAttribute="trailing" constant="20" symbolic="YES" id="Xjm-Zx-KVT"/>
-                            <constraint firstItem="phk-gt-IXS" firstAttribute="leading" secondItem="qAz-2I-m39" secondAttribute="leadingMargin" constant="50" id="tUo-XL-VRC"/>
-                            <constraint firstItem="U1B-Ml-8FH" firstAttribute="leading" secondItem="LbA-xb-aka" secondAttribute="leadingMargin" constant="-8" id="uHi-Km-IcI"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="LbA-xb-aka" secondAttribute="trailing" constant="20" symbolic="YES" id="vr0-Fe-jDf"/>
-                            <constraint firstItem="phk-gt-IXS" firstAttribute="top" secondItem="qAz-2I-m39" secondAttribute="topMargin" constant="50" id="x40-Ch-DBL"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="favButton" destination="LbA-xb-aka" id="lUh-LS-phG"/>
-                        <outlet property="homeButton" destination="phk-gt-IXS" id="fcV-GW-ySu"/>
-                        <outlet property="recentButton" destination="U1B-Ml-8FH" id="5fY-to-CmI"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NfQ-Kg-Ei0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="307" y="883"/>
         </scene>
         <!--FavVC-->
         <scene sceneID="QqX-Zx-x6J">
@@ -972,7 +912,9 @@
                     <connections>
                         <outlet property="citiesAdded" destination="I2y-Tg-gPq" id="nvG-hR-kha"/>
                         <outlet property="numberOfCitisView" destination="tnw-sM-KKj" id="ONs-sA-Llw"/>
+                        <outlet property="removeButtonText" destination="Nzv-pf-LmG" id="1Jf-i1-Vjz"/>
                         <outlet property="tableView" destination="awh-Wj-0P8" id="1YD-D4-Eoi"/>
+                        <outlet property="titleLabel" destination="p32-jU-v7E" id="7Su-wK-QYu"/>
                         <outlet property="toShowNothing" destination="zzO-Ed-fq8" id="uTI-IH-ndc"/>
                         <outlet property="toShowNothinglabel" destination="qW1-Iq-Ir5" id="szx-Uv-kcY"/>
                     </connections>
@@ -998,6 +940,9 @@
             <point key="canvasLocation" x="2767" y="875"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="46o-iT-nVn"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="aqi.low" catalog="system" width="128" height="119"/>
         <image name="aqi.medium" catalog="system" width="128" height="125"/>
