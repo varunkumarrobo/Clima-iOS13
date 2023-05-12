@@ -17,14 +17,14 @@ struct SearchManager {
     
     let suggestionsUrl = "https://api.foursquare.com/v3/autocomplete?&types=geo"
     
-//    "https://api.foursquare.com/v3/autocomplete?&types=geo&query=Udupi"
+    //    "https://api.foursquare.com/v3/autocomplete?&types=geo&query=Udupi"
     
     var delegate : SearchManagerDelegate!
     
     //MARK: - getSuggestion Function
     func getSuggestions(search : String) {
         
-        let textURL = "\(suggestionsUrl)&query=\(search)"
+        let textURL = "\(suggestionsUrl)&query=\(search.trimmingCharacters(in: .whitespaces))"
         print(textURL)
         guard let url = URL(string: textURL) else {
             print("Invalid URL")
@@ -46,23 +46,23 @@ struct SearchManager {
                 return
             }
         do {
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                let results = json["results"] as! [[String: Any]]
+            let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+            let results = json["results"] as! [[String: Any]]
             for result in results {
-                     print("result from search \(result)")
+                print("result from search \(result)")
                 let text = result["text"]! as! [String:Any]
-                    let name = text["primary"]! as! String
-                    let geo = result["geo"]! as! [String:Any]
-                    let center = geo["center"]! as! [String:Double]
-                    let latitude = center["latitude"]!
-                    let longitude = center["longitude"]!
-                    locationList.append(
-                        LocationforSearch(city: name, latitude: latitude, longitude: longitude)
-                    )
-                }
-            } catch {
-                print("Error: \(error.localizedDescription)")
+                let name = text["primary"]! as! String
+                let geo = result["geo"]! as! [String:Any]
+                let center = geo["center"]! as! [String:Double]
+                let latitude = center["latitude"]!
+                let longitude = center["longitude"]!
+                locationList.append(
+                    LocationforSearch(city: name, latitude: latitude, longitude: longitude)
+                )
             }
+        } catch {
+            print("Error: \(error.localizedDescription)")
+        }
         // print(locationList.count)
         delegate.updateTableView(locationList: locationList)
         
@@ -70,5 +70,5 @@ struct SearchManager {
         task.resume()
         
     }
-        }
-        
+}
+

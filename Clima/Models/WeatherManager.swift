@@ -12,11 +12,9 @@ import CoreLocation
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)
     func didFailError(error : Error)
-    //    func suggestionData(data : [String])
 }
 
 protocol CountryDetailsDelegate {
-//    func updateCountryname(country: String)
     func didUpdateDetails(_ weatherManager : WeatherManager, details : CountryModel)
     func didFailDetailsError(error : Error)
 }
@@ -54,49 +52,6 @@ struct WeatherManager {
         
     }
     
-    func performRequestOfCountryDetails(with urlString : String)  {
-        //1.Create a URL
-        if let url = URL(string: urlString){
-            //2.Create a URLSession
-            let session = URLSession(configuration: .default)
-            //3.Give the session a task
-            let task = session.dataTask(with : url) { (data, response, error) in
-                if error != nil{
-                    self.delegateSec?.didFailDetailsError(error: error!)
-                    return
-                }
-                if let safeData = data {
-                    print("passed at SafeData")
-                    if let details = self.parJSON(safeData) {
-                        print("passed at self.parJSON")
-                        self.delegateSec?.didUpdateDetails(self, details: details)
-                    }
-                }
-            }
-            //4.task resume
-            task.resume()
-        }
-    }
-    
-    
-    //MARK: - getSuggestion Function
-    func getSuggestions(search : String) {
-        
-        let url = URL(string: "https://api.foursquare.com/v3/autocomplete&types=geo?query=\(search)")!
-        var request = URLRequest(url: url)
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json",
-            "Authorization" : "fsq3D/EcUE30gzKKz37Ga5Kr4S9CW/DAXz8D/PjVI28HlTo="
-        ]
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard error == nil else { return }
-            guard let data = data else { return }
-            print("suggestion data \(data)")
-        }.resume()
-    }
-    
-    
     //MARK:- URLSESSION DATATASK
     func performRequest(with urlString : String)  {
         //1.Create a URL
@@ -114,6 +69,30 @@ struct WeatherManager {
                     if let weather = self.parseJSON(safeData) {
                         print("passed at self.parseJSON")
                         self.delegate?.didUpdateWeather(self, weather: weather)
+                    }
+                }
+            }
+            //4.task resume
+            task.resume()
+        }
+    }
+    
+    func performRequestOfCountryDetails(with urlString : String)  {
+        //1.Create a URL
+        if let url = URL(string: urlString){
+            //2.Create a URLSession
+            let session = URLSession(configuration: .default)
+            //3.Give the session a task
+            let task = session.dataTask(with : url) { (data, response, error) in
+                if error != nil{
+                    self.delegateSec?.didFailDetailsError(error: error!)
+                    return
+                }
+                if let safeData = data {
+                    print("passed at SafeData of Country Details")
+                    if let details = self.parJSON(safeData) {
+                        print("passed at self.parJSON")
+                        self.delegateSec?.didUpdateDetails(self, details: details)
                     }
                 }
             }
@@ -154,10 +133,10 @@ struct WeatherManager {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(DetailsData.self, from: countryData)
-            let countryName = decodedData.location.country  
+            let countryName = decodedData.location.country
+            let localtime = decodedData.location.localtime
             print("passing data in parJSON \(countryName)")
-            let details = CountryModel(country: countryName)
-//            delegateSec!.updateCountryname(country: countryName)
+            let details = CountryModel(country: countryName, localtime: localtime)
             return details
         }catch {
             delegateSec?.didFailDetailsError(error: error)

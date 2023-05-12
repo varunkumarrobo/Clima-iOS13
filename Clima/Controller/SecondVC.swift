@@ -16,21 +16,17 @@ class SecondVC: UIViewController {
 
     @IBOutlet var searchTextField: UITextField!
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var navBarView: UIView!
     
     var weatherManager = WeatherManager()
     var locations = [LocationforSearch]()
     var searchManager = SearchManager()
     var dataName = ""
     var delegate : passDataToVC!
-    
     var suggestions = [String]()
-    
     var searching = false
     
-    var testArray = ["Pakistan","Saudi Arbia","Arab Emirates","Malaysia","Turkey","Libya","Yemen","Sieraa","Sri Lanka"]
-    
-    var filteredarray = [String]()
- 
+
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -40,39 +36,30 @@ class SecondVC: UIViewController {
         tableView.dataSource = self
         searchManager.delegate = self
         searchTextField.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
+        addTopAndBottomBorders()
+        
+        tableView.tableFooterView = UIView(frame: .zero)
     }
+    
     
     @objc func searchRecord(sender: UITextField){
         
         let cityName = searchTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
         if cityName.count > 2 {
             self.searchManager.getSuggestions(search: cityName)
-//            debouncer.debounce {
-//
-//            }
         }
-//        self.suggestions.removeAll()
-//        let searchData : Int = searchTextField.text!.count
-//        if searchData != 0 {
-//            searching = true
-//            for suggest in testArray {
-//                if let nameToSearch = searchTextField.text{
-//                    let range = suggest.lowercased().range(of: nameToSearch, options: .caseInsensitive, range: nil, locale: nil)
-//                    if range != nil {
-//                        self.suggestions.append(suggest)
-//                    }
-//                }
-//            }
-//        } else {
-//            suggestions = testArray
-//            searching = false
-//        }
-//        tableView.reloadData()
-        
     }
     
     @IBAction func backButton(_ sender: UIButton) {
         navigationController?.popViewController(animated: true)
+    }
+    
+    func addTopAndBottomBorders() {
+       let thickness: CGFloat = 2.0
+       let bottomBorder = CALayer()
+       bottomBorder.frame = CGRect(x:0, y: self.navBarView.frame.size.height - thickness, width: self.navBarView.frame.size.width, height:thickness)
+       bottomBorder.backgroundColor = UIColor.gray.cgColor
+        navBarView.layer.addSublayer(bottomBorder)
     }
 }
 
@@ -85,14 +72,12 @@ extension SecondVC : SearchManagerDelegate{
         }
     }
     
-    
 }
 
 //MARK: - UITextFieldDelegate
 extension SecondVC : UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         
         if textField.text != "" {
             textField.resignFirstResponder()
@@ -120,13 +105,12 @@ extension SecondVC : UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let dataName = searchTextField.text{
-//             weatherManager.fetchWeather(cityName: dataName)
             print(dataName)
             delegate.fetchWeatherFromSecondVC(str: dataName)
         }
         
         if let suggestions = searchTextField.text{
-                weatherManager.getSuggestions(search: suggestions)
+                 searchManager.getSuggestions(search: suggestions)
             print("suggestions -> \(suggestions)")
         }
         searchTextField.text = ""
@@ -139,28 +123,17 @@ extension SecondVC : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return locations.count
-//        if searching {
-//            return suggestions.count
-//        }else{
-//            return testArray.count
-//        }
      }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = locations[indexPath.row].cityName
-//        if searching {
-//            cell.textLabel?.text = suggestions[indexPath.row]
-//        }else{
-//            cell.textLabel?.text = testArray[indexPath.row]
-//        }
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        searchTextField.text = testArray[indexPath.row]
+        searchTextField.text = locations[indexPath.row].cityName
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -220,3 +193,27 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 //
 //        }
 //    }
+
+//        self.suggestions.removeAll()
+//        let searchData : Int = searchTextField.text!.count
+//        if searchData != 0 {
+//            searching = true
+//            for suggest in testArray {
+//                if let nameToSearch = searchTextField.text{
+//                    let range = suggest.lowercased().range(of: nameToSearch, options: .caseInsensitive, range: nil, locale: nil)
+//                    if range != nil {
+//                        self.suggestions.append(suggest)
+//                    }
+//                }
+//            }
+//        } else {
+//            suggestions = testArray
+//            searching = false
+//        }
+//        tableView.reloadData()
+
+//        if searching {
+//            cell.textLabel?.text = suggestions[indexPath.row]
+//        }else{
+//            cell.textLabel?.text = testArray[indexPath.row]
+//        }

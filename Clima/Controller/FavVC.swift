@@ -15,14 +15,15 @@ class FavVC: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var citiesAdded: UILabel!
+    @IBOutlet var numberOfCitisView: UIStackView!
+    @IBOutlet var toShowNothing: UIImageView!
+    @IBOutlet var toShowNothinglabel: UILabel!
     
     var weatherManager = WeatherManager()
     
     var imageString = ""
     var tempString = ""
     var descripString = ""
-    
-    //    var colors : [UIColor] = []
     
     var  itemArray = [ WeatherDB ] ()
     
@@ -36,14 +37,38 @@ class FavVC: UIViewController {
         loadItems()
         for i in 0 ..< itemArray.count {
             weatherManager.fetchWeather(cityName: itemArray[i].place ?? "London")
-            
         }
         tableView.dataSource = self
         tableView.delegate = self
         updateCities()
         tableView.tableFooterView = UIView(frame: .zero)
+        tableView.backgroundColor = UIColor.clear
+        tableView.backgroundView = nil
+        
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor.systemBackground
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+        emptyView()
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.backgroundColor = UIColor.clear
+//        toShowNothing.isHidden = false
+    }
+    
+    func emptyView()  {
+        if itemArray.count == 0 {
+            tableView.isHidden = true
+            numberOfCitisView.isHidden = true
+//            toShowNothing.isHidden = false
+//            toShowNothinglabel.isHidden = false
+        } else if itemArray.count > 0 {
+//            toShowNothing.isHidden = false
+            tableView.isHidden = false
+            numberOfCitisView.isHidden = false
+        }
+    }
     
     
     @IBAction func backButton(_ sender: UIButton) {
@@ -51,7 +76,13 @@ class FavVC: UIViewController {
     }
     
     func updateCities()  {
-        citiesAdded.text = "\(itemArray.count) City added as favourite"
+        citiesAdded.text = ""
+        if itemArray.count == 1 {
+            citiesAdded.text =      "\(itemArray.count) City added as favourite"
+        }
+        if itemArray.count > 1 {
+            citiesAdded.text =   "\(itemArray.count) Citie's added as favourite"
+        }
     }
     
     @IBAction func removeAll(_ sender: UIButton) {
@@ -66,6 +97,10 @@ class FavVC: UIViewController {
         
     }
     
+  
+    @IBAction func deleteFavs(_ sender: UIButton) {
+        
+    }
     
     func loadItems(with request : NSFetchRequest<WeatherDB> =  WeatherDB.fetchRequest() ) {
         
@@ -101,7 +136,6 @@ extension FavVC : WeatherManagerDelegate {
             print("fav-executed")
             self.tempString = weather.tempratureString
             self.imageString = weather.conditionName
-            //                UIImage(systemName: weather.conditionName)
             self.descripString = weather.description
             
             print(self.tempString)
@@ -140,10 +174,9 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate {
         cell.favImaLabel.image = UIImage(systemName: image)
         cell.tempLabel.text = temp
         cell.descripLabel.text = desc
-        
+        cell.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         print(tempString)
         print(descripString)
-        
         return cell
     }
     

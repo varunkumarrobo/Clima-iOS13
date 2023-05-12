@@ -10,8 +10,7 @@ protocol WeatherViewControllerDelegate : AnyObject {
 class WeatherViewController: UIViewController{
     
     var  itemArray = [ WeatherDB ] ()
-    
-    let countryUrl = "https://api.weatherapi.com/v1/current.json?key=5c3bf1f114ef4babb2573540231105&aqi=no"
+    var favoriteItems: [WeatherDB] = []
     
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -28,11 +27,10 @@ class WeatherViewController: UIViewController{
     @IBOutlet var visibilityLabel: UILabel!
     @IBOutlet var humidityLabel: UILabel!
     @IBOutlet var feelsLikeLabel: UILabel!
-    
     @IBOutlet var countryLabelSec: UILabel!
     
     var countryLabel = ""
-    var menuOut = false
+    
     var isFavourite = false
     var fahrenheitTemp = 0.0
     
@@ -47,8 +45,6 @@ class WeatherViewController: UIViewController{
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     var secondVC = SecondVC()
-    let date = Date();
-    let dateFormatter = DateFormatter();
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
     
@@ -69,11 +65,10 @@ class WeatherViewController: UIViewController{
         locationManager.requestLocation()
         
         saveItems()
-        
+        loadFavoriteItems()
         loadDrawerBackground()
         drawerViewCopy.layer.zPosition = 1
         loadDrawer()
-        print("viewDidLoad End")
         segmentedControl()
         
     }
@@ -84,34 +79,28 @@ class WeatherViewController: UIViewController{
         
     }
     
-    //MARK:- SegmentedControl part
-    @IBAction func segmentedOutput(_ sender: UISegmentedControl) {
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisappear")
+        drawerStatus = false
+        updateDrawerUI()
         
-        let celsiusTemp = (fahrenheitTemp - 32) * 5/9
-        print(celsiusTemp)
-        if segmentedButtonControl.selectedSegmentIndex == 0 {
-            temperatureLabel.text = String(format: "%.0f", celsiusTemp)
-        } else {
-            temperatureLabel.text = String(format: "%.0f", fahrenheitTemp)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("viewWillDisappear")
+        
+    }
+    
+    func loadFavoriteItems() {
+        let request: NSFetchRequest<WeatherDB> = WeatherDB.fetchRequest()
+        do {
+            favoriteItems = try context.fetch(request)
+            print("Excuted at loadFavoriteItems")
+        } catch {
+            print("Error loading favorite items: \(error)")
         }
-        
     }
-    
-    func segmentedControl()  {
-        segmentedButtonControl.backgroundColor = .clear
-        segmentedButtonControl.tintColor = .clear
-        segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
-        segmentedButtonControl.layer.cornerRadius = 0
-        segmentedButtonControl.layer.borderWidth = 2
-        segmentedButtonControl.backgroundColor = .clear
-        segmentedButtonControl.setTitleTextAttributes([
-          NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
-          NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
-        segmentedButtonControl.setTitleTextAttributes([
-       NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
-       NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
-    }
-    
     //MARK: - DataBase Related Functions
     
     func saveItems() {
@@ -122,13 +111,37 @@ class WeatherViewController: UIViewController{
         }
     }
     
-    //MARK: - UI Desgin Related Functions
-     func didTapMenuButton(){
-        print("Pressed")
-        drawerStatus = !drawerStatus
-        updateDrawerUI()
-        print("did tap menu")
+    //MARK:- SegmentedControl part
+    
+    @IBAction func segmentedOutput(_ sender: UISegmentedControl) {
+        
+        let celsiusTemp = (fahrenheitTemp - 32) * 5/9
+        print(celsiusTemp)
+        if segmentedButtonControl.selectedSegmentIndex == 0 {
+            temperatureLabel.text = String(format: "%.0f", celsiusTemp)
+        } else {
+            temperatureLabel.text = String(format: "%.0f", fahrenheitTemp)
+        }
     }
+    
+    func segmentedControl()  {
+        segmentedButtonControl.backgroundColor = .clear
+        segmentedButtonControl.tintColor = .clear
+        segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
+        segmentedButtonControl.layer.cornerRadius = 0
+        segmentedButtonControl.layer.borderWidth = 2
+        segmentedButtonControl.backgroundColor = .clear
+        segmentedButtonControl.setTitleTextAttributes([
+                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+                                                        NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
+        segmentedButtonControl.setTitleTextAttributes([
+                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+                                                        NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+    }
+    
+    
+    //MARK: - UI Desgin Related Functions
+    
     
     func updateDrawerUI() {
         UIView.animate(withDuration: 0.75) {
@@ -136,7 +149,6 @@ class WeatherViewController: UIViewController{
             self.drawerBackgroundView.alpha = self.drawerStatus ? 0.6: 0
             print("animation complete")
         }
-        
     }
     
     @objc func handleBackgroundTap() {
@@ -150,19 +162,6 @@ class WeatherViewController: UIViewController{
         print("favouriteButtonTapped") }
     @objc func recentButtonTapped() { print("recentButtonTapped") }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        print("viewDidDisappear")
-        drawerStatus = false
-        updateDrawerUI()
-        
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        print("viewWillDisappear")
-        
-    }
-    
-    
     //MARK: - Button's Related Functions
     @IBAction func addToFav(_ sender: UIButton) {
         
@@ -172,35 +171,155 @@ class WeatherViewController: UIViewController{
         
         isFavourite = !isFavourite
         if isFavourite {
-            sender.setTitle("Remove from favourite", for: .normal)
-            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
-//                context.delete(itemArray[i])
-//            }
-            print("Deleted")
-        } else {
+            // Item already exists, delete it
             sender.setTitle("Add to favourite", for: .normal)
             sender.setImage(UIImage(systemName: "heart"), for: .normal)
-            self.itemArray.append(newItem)
-            print("Sucess")
+            if let index = favoriteItems.lastIndex(of: newItem) {
+                favoriteItems.remove(at: index)
+                itemArray.remove(at: index)
+                context.delete(itemArray.last!)
+            }
+            context.delete(newItem)
+            saveItems()
+            print("Item removed from favorites")
+        } else {
+            // Item doesn't exist, add it
+            sender.setTitle("Remove from favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            
+            favoriteItems.append(newItem)
+            saveItems()
+            print("Item added to favorites")
         }
         
+        //        isFavourite.toggle()
+        //        if favoriteItems.contains(newItem) {
+        //                // Item already exists, delete it
+        //                sender.setTitle("Add to favorites", for: .normal)
+        //                sender.setImage(UIImage(systemName: "heart"), for: .normal)
+        //                if let index = favoriteItems.firstIndex(of: newItem) {
+        //                    favoriteItems.remove(at: index)
+        //                }
+        //                context.delete(newItem)
+        //                saveItems()
+        //                print("Item removed from favorites")
+        //            } else {
+        //                // Item doesn't exist, add it
+        //                sender.setTitle("Remove from favorites", for: .normal)
+        //                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        //                favoriteItems.append(newItem)
+        //                saveItems()
+        //                print("Item added to favorites")
+        //            }
         
-//        if cityLabel.text == "" {
-//            print("empty")
-//        } else {
-//            self.itemArray.append(newItem)
-//        }
+        //        func addFavorite() {
+        //            // Execute an SQL INSERT statement to add the item as a favorite
+        //            sender.setTitle("Remove from favourite", for: .normal)
+        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        //            if let index = favoriteItems.firstIndex(of: newItem) {
+        //                        favoriteItems.remove(at: index)
+        //                    }
+        //            self.itemArray.append(newItem)
+        //            self.saveItems()
+        //            print("Success")
+        //            // Execute the SQL statement with your SQLite database connection
+        //            // ...
+        //        }
+        //
+        //        func deleteFavorite() {
+        //            // Execute an SQL DELETE statement to remove the item from favorites
+        //            sender.setTitle("Add to favourite", for: .normal)
+        //            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+        //            if let lastItem = itemArray.last {
+        //                context.delete(lastItem)
+        //                self.itemArray.removeLast()
+        //            }
+        //            print("Deleted")
+        //            // Execute the SQL statement with your SQLite database connection
+        //            // ...
+        //        }
+        //
+        //        func checkIfFavorite() -> Bool {
+        //            // Execute an SQL SELECT statement to check if the item is already a favorite
+        //            if itemArray.contains(newItem) {
+        //                return true
+        //            } else {
+        //                return false
+        //            }
+        //            // Execute the SQL statement with your SQLite database connection
+        //            // ...
+        //            // Check the result of the SELECT query to determine if the item is a favorite
+        //            // Return true if the item is a favorite, false otherwise
+        //        }
+        //
+        //        isFavourite.toggle()
+        //
+        //        if isFavourite {
+        //            sender.setTitle("Remove from favourite", for: .normal)
+        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        //            deleteFavorite()
+        //            print("Deleted")
+        //        } else {
+        //            sender.setTitle("Add to favourite", for: .normal)
+        //            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+        //            addFavorite()
+        //            print("Success")
+        //        }
         
-        self.saveItems()
-        print("success")
+        //        let isFavorite = checkIfFavorite()
+        //          isFavorite ? deleteFavorite() : addFavorite()
         
+        //        if cityLabel.text == "" {
+        //            print("empty")
+        //        } else {
+        //            self.itemArray.append(newItem)
+        //        }
+        
+        //        func deleteFavorite(_ itemId: Array<Any>) {
+        //            // Execute an SQL DELETE statement to remove the item from favorites
+        //            sender.setTitle("Remove from favourite", for: .normal)
+        //            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        //            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
+        //                context.delete(itemArray[i])
+        //                self.itemArray.removeLast()
+        //            }
+        //            print("Deleted")
+        //            // Execute the SQL statement with your SQLite database connection
+        //            // ...
+        //        }
+        
+        //                        isFavourite = !isFavourite
+        //                        if isFavourite {
+        //                            sender.setTitle("Remove from favourite", for: .normal)
+        //                            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        //                            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
+        //                                context.delete(itemArray[i])
+        //                                itemArray.removeLast()
+        //                            }
+        //                            print("Deleted")
+        //                        } else {
+        //                            sender.setTitle("Add to favourite", for: .normal)
+        //                            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+        //                            self.itemArray.append(newItem)
+        //                            print("Sucess")
+        //                        }
+        
+        //        self.saveItems()
+        //        print("success")
+    }
+    
+    func didTapMenuButton(){
+        print("Pressed")
+        drawerStatus = !drawerStatus
+        updateDrawerUI()
+        print("did tap menu")
     }
     
     @IBAction func drawerButton(_ sender: UIButton) {
         print("drawer Button pressed")
         didTapMenuButton()
     }
+    
     
     @IBAction func currentLocation(_ sender: UIButton) {
         locationManager.requestLocation()
@@ -209,7 +328,7 @@ class WeatherViewController: UIViewController{
     @IBAction func searchButton(_ sender: UIButton) {
         performSegue(withIdentifier: "goSearchVC", sender: navigationController)
     }
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let secondVC = segue.destination as? SecondVC, segue.identifier == "goSearchVC" {
             secondVC.loadViewIfNeeded()
@@ -264,7 +383,6 @@ class WeatherViewController: UIViewController{
             recentButton.leadingAnchor.constraint(equalTo: favouriteButton.leadingAnchor),
             recentButton.topAnchor.constraint(equalTo: favouriteButton.topAnchor, constant: 40),
         ])
-        
     }
     
     func loadDrawerBackground() {
@@ -272,10 +390,10 @@ class WeatherViewController: UIViewController{
         drawerBackgroundView.backgroundColor = .black
         drawerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-        drawerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        drawerBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        drawerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        drawerBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor)
+            drawerBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            drawerBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            drawerBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            drawerBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap));  drawerBackgroundView.addGestureRecognizer(tapGestureRecognizer)
         
@@ -290,14 +408,13 @@ extension WeatherViewController : passDataToVC {
         weatherManager.fetchWeather(cityName: str)
         weatherManager.fetchWeather(countryName: str)
         print("Updated")
-    } 
-    
+    }
 }
 
 
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController : WeatherManagerDelegate {
-     
+    
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)  {
         DispatchQueue.main.async {
             print("executed")
@@ -309,18 +426,11 @@ extension WeatherViewController : WeatherManagerDelegate {
             self.humidityLabel.text = String(weather.humidity)
             self.feelsLikeLabel.text = String(weather.feels_like)
             self.visibilityLabel.text = String(weather.visibility)
-            let mytime = weather.timeString
-            let format = DateFormatter()
-            format.timeStyle = .long
-            format.dateStyle = .long
-            let timeHere = Date()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "LLLL dd, hh:mm:ss a"
-            dateFormatter.timeZone = TimeZone(secondsFromGMT: Int(mytime.timeIntervalSince1970))
-            let timeThere = dateFormatter.string(from: mytime)
-            print("timeHere: \(timeHere)   timeThere: \(timeThere) \n")
-            self.timeLabel.text =
-                String(format.string(from: timeHere))
+            let formatter = DateFormatter()
+            formatter.dateFormat = "E, dd MMM yyyy hh:mm a"
+            let currentTimeString = formatter.string(from: Date())
+            print(currentTimeString)
+            self.timeLabel.text = currentTimeString
             self.fahrenheitTemp = (weather.temp * 9/5) + 32
             print("fahrenheitTemp : -  \(self.fahrenheitTemp)")
             print(weather.timeString)
@@ -333,13 +443,12 @@ extension WeatherViewController : WeatherManagerDelegate {
         print("error from didUpdateWeather \(error)")
     }
 }
-
+//MARK:- CountryDetailsDelegate
 extension WeatherViewController : CountryDetailsDelegate {
-
+    
     func didUpdateDetails(_ weatherManager: WeatherManager, details: CountryModel) {
         DispatchQueue.main.async {
             self.countryLabelSec.text = details.country
-//            self.countryLabel = details.country
             print(details.country)
         }
     }
@@ -350,8 +459,6 @@ extension WeatherViewController : CountryDetailsDelegate {
     
 }
 
-
-
 //MARK: - CLLocationManagerDelegate
 extension WeatherViewController : CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -360,8 +467,6 @@ extension WeatherViewController : CLLocationManagerDelegate {
             let lat = location.coordinate.latitude
             let long = location.coordinate.longitude
             weatherManager.fetchWeather(latitude: lat, longitude: long)
-            
-            
         }
     }
     

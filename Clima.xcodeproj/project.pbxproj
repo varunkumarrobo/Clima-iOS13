@@ -23,6 +23,7 @@
 		D85A354329F80F1500823A80 /* WeatherDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D85A354129F80F1500823A80 /* WeatherDB.xcdatamodeld */; };
 		D85A354729F8220D00823A80 /* background_android.png in Resources */ = {isa = PBXBuildFile; fileRef = D85A354629F8220C00823A80 /* background_android.png */; };
 		D887A89C2A0D19AE00810DD7 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D887A89B2A0D19AD00810DD7 /* SearchManager.swift */; };
+		D887A8A42A0E478C00810DD7 /* icon_nothing.png in Resources */ = {isa = PBXBuildFile; fileRef = D887A8A32A0E478B00810DD7 /* icon_nothing.png */; };
 		D8A99B8129F2BEF00022BFF0 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */; };
 		D8A99B8429F39E390022BFF0 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */; };
 		D8A99B8729F3A31D0022BFF0 /* RecentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */; };
@@ -48,6 +49,7 @@
 		D85A354229F80F1500823A80 /* WeatherDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherDB.xcdatamodel; sourceTree = "<group>"; };
 		D85A354629F8220C00823A80 /* background_android.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_android.png; sourceTree = "<group>"; };
 		D887A89B2A0D19AD00810DD7 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
+		D887A8A32A0E478B00810DD7 /* icon_nothing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_nothing.png; sourceTree = "<group>"; };
 		D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentVC.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				ADAA27C8231BC3E500365194 /* Controller */,
 				ADAA27B9231BBFB300365194 /* Assets.xcassets */,
 				D85A354629F8220C00823A80 /* background_android.png */,
+				D887A8A32A0E478B00810DD7 /* icon_nothing.png */,
 				D8212D5F29E80CFC00015D35 /* logo.png */,
 				ADAA27BB231BBFB300365194 /* LaunchScreen.storyboard */,
 				ADAA27BE231BBFB300365194 /* Info.plist */,
@@ -200,6 +203,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADAA27CE231BC87F00365194 /* README.md in Resources */,
+				D887A8A42A0E478C00810DD7 /* icon_nothing.png in Resources */,
 				D8212D6029E80CFC00015D35 /* logo.png in Resources */,
 				ADAA27BD231BBFB300365194 /* LaunchScreen.storyboard in Resources */,
 				ADAA27BA231BBFB300365194 /* Assets.xcassets in Resources */,

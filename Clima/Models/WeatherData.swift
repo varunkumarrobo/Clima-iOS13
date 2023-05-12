@@ -16,7 +16,6 @@ struct WeatherData : Codable {
     let sys : System
     let visibility : Int
 
-   
 }
 
 struct Main : Codable {
@@ -48,6 +47,7 @@ struct DetailsData : Codable {
 
 struct Location : Codable { 
     let country : String
+    let localtime : String
 }
 
 

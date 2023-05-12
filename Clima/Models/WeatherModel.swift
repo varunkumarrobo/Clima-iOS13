@@ -57,6 +57,7 @@ struct WeatherModel {
 
 struct CountryModel {
     let country : String
+    let localtime : String
 }
 
 struct LocationforSearch {
