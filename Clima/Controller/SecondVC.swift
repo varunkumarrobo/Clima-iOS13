@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 protocol passDataToVC {
     func fetchWeatherFromSecondVC(str: String)
@@ -18,6 +19,7 @@ class SecondVC: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var navBarView: UIView!
     
+    var recentArray = [ RecentSearch ] ()
     var weatherManager = WeatherManager()
     var locations = [LocationforSearch]()
     var searchManager = SearchManager()
@@ -26,6 +28,7 @@ class SecondVC: UIViewController {
     var suggestions = [String]()
     var searching = false
     
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +41,7 @@ class SecondVC: UIViewController {
         searchTextField.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
         addTopAndBottomBorders()
         tableView.tableFooterView = UIView(frame: .zero)
+        SaveSearch()
     }
     
     
@@ -60,6 +64,18 @@ class SecondVC: UIViewController {
        bottomBorder.backgroundColor = UIColor.gray.cgColor
         navBarView.layer.addSublayer(bottomBorder)
     }
+    
+    //MARK:- Save to DataBase
+    
+    func SaveSearch() {
+        // Save the changes
+        do {
+            try context.save()
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+    
 }
 
 //MARK:- SearchManagerDelegate
@@ -82,15 +98,13 @@ extension SecondVC : UITextFieldDelegate {
             textField.resignFirstResponder()
             let cityName = textField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
             searchManager.getSuggestions(search: cityName)
+           
+//            newUser.setValue("john@example.com", forKeyPath: "email")
             return true
         } else {
             return false
         }
         
-//        searchTextField.endEditing(true)
-//        print(searchTextField.text!)
-//
-//        return true
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
@@ -110,6 +124,14 @@ extension SecondVC : UITextFieldDelegate {
         
         if let suggestions = searchTextField.text{
                  searchManager.getSuggestions(search: suggestions)
+            let userEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: context)!
+            let newUser = NSManagedObject(entity: userEntity, insertInto: context)
+            newUser.setValue(searchTextField.text, forKeyPath: "searchPlace")
+            recentArray.append(newUser as! RecentSearch)
+            newUser.setValue(searchTextField.text, forKey: "searchCountry")
+            newUser.setValue(false, forKey: "isFav")
+            self.SaveSearch()
+            print("from second VC \(newUser)")
             print("suggestions -> \(suggestions)")
         }
         searchTextField.text = ""

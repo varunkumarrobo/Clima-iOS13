@@ -9,8 +9,6 @@
 import UIKit
 import CoreData
 
-
-
 class FavVC : UIViewController {
     
     @IBOutlet var tableView: UITableView!
@@ -23,21 +21,21 @@ class FavVC : UIViewController {
     
     var isFavourtie : Bool!
     
+    
     var weatherManager = WeatherManager()
     var imageString = ""
     var tempString = ""
     var descripString = ""
     
-    var  itemArray = [ WeatherDB ] ()
-    var locations = [LocationforSearch]()
-    var searchManager = SearchManager()
+    var  itemArray : [WeatherDB] = []
+    var recentSearch : [RecentSearch] = []
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         weatherManager.delegate = self
-        searchManager.delegate = self
         titleLabel.text = isFavourtie ? "Favourties" : "Recent Search"
         loadItems()
         for i in 0 ..< itemArray.count {
@@ -48,12 +46,13 @@ class FavVC : UIViewController {
         updateCities()
         tableViewSetUp()
         emptyView()
+        loadRecent()
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
-//        tableView.backgroundColor = UIColor.clear
-//        toShowNothing.isHidden = false
+        //        tableView.backgroundColor = UIColor.clear
+        //        toShowNothing.isHidden = false
         removeButtonText.setTitle(isFavourtie ? "Remove All" : "Clear All", for: .normal)
     }
     
@@ -70,10 +69,10 @@ class FavVC : UIViewController {
         if itemArray.count == 0 {
             tableView.isHidden = true
             numberOfCitisView.isHidden = true
-//            toShowNothing.isHidden = false
-//            toShowNothinglabel.isHidden = false
+            //            toShowNothing.isHidden = false
+            //            toShowNothinglabel.isHidden = false
         } else if itemArray.count > 0 {
-//            toShowNothing.isHidden = false
+            //            toShowNothing.isHidden = false
             tableView.isHidden = false
             numberOfCitisView.isHidden = false
         }
@@ -96,13 +95,26 @@ class FavVC : UIViewController {
     
     @IBAction func removeAll(_ sender: UIButton) {
         
-        for i in 0 ..< itemArray.count where i < itemArray.count-0 {
-            context.delete(itemArray[i])
+        func remove() {
+            for i in 0 ..< itemArray.count  where i < itemArray.count-0 {
+                context.delete(itemArray[i])
+            }
+            
+            itemArray.removeAll()
+            saveItems()
+//            updateCities()
         }
         
-        itemArray.removeAll()
-        saveItems()
-        updateCities()
+        func clear(){
+            for i in 0 ..< recentSearch.count  where i < recentSearch.count-0 {
+                context.delete(recentSearch[i])
+            }
+            recentSearch.removeAll()
+            saveItems()
+//            updateCities()
+        }
+        
+        isFavourtie ? remove() : clear()
         
     }
     
@@ -125,14 +137,25 @@ class FavVC : UIViewController {
         tableView.reloadData()
     }
     
+    func loadRecent(with request : NSFetchRequest<RecentSearch> =  RecentSearch.fetchRequest())  {
+       
+        do{
+            recentSearch = try context.fetch(request)
+            //            print(recentSearch[0].searchPlace!)
+            //                print(itemArray[0].country!)
+            
+        } catch {
+            print("Error fetching data from context \(error)")
+        }
+        tableView.reloadData()
+    }
+    
     func saveItems() {
-        
         do {
             try context.save()
         } catch {
             print("Error saving context, \(error)")
         }
-        
         self.tableView.reloadData()
     }
     
@@ -148,21 +171,9 @@ extension FavVC : passDataToVC {
     }
 }
 
-//MARK:- SearchManagerDelegate
-extension FavVC : SearchManagerDelegate{
-    func updateTableView(locationList: [LocationforSearch]) {
-        DispatchQueue.main.async{
-            [self] in locations = locationList
-            tableView.reloadData()
-        }
-    }
-    
-}
-
-
 //MARK: - WeatherManagerDelegate
 extension FavVC : WeatherManagerDelegate {
-  
+    
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)  {
         DispatchQueue.main.async {
             print("fav-executed")
@@ -184,30 +195,33 @@ extension FavVC : WeatherManagerDelegate {
 extension FavVC : UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return isFavourtie ? itemArray.count : locations.count
+        return isFavourtie ? itemArray.count  : recentSearch.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let favDetails = itemArray[indexPath.row]
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
         
         let image = imageString
         let temp = tempString
         let desc = descripString
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
-        
-        //        let cell = tableView.cellForRow(at: indexPath) as! Cell
-        cell.setNames(itemArray: favDetails)
+        if isFavourtie {
+            let favoriteItem = itemArray[indexPath.row]
+                    cell.setNames(itemArray: favoriteItem)
+                    // Configure the cell using favoriteItem properties
+                } else {
+                    let recentSearchItem = recentSearch[indexPath.row]
+                    cell.setSearchs(searchArray: recentSearchItem)
+                    // Configure the cell using recentSearchItem properties
+                }
         
         cell.favImaLabel.image = UIImage(systemName: image)
         cell.tempLabel.text = temp
         cell.descripLabel.text = desc
         cell.backgroundColor = UIColor.white.withAlphaComponent(0.2)
-        print(tempString)
-        print(descripString)
+        
+        
         return cell
     }
     
@@ -226,12 +240,19 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate {
     
 }
 
+        
 
-//        cell.cityLabel.text = itemArray[indexPath.row].place
-//        cell.countryLabel.text = itemArray[indexPath.row].country
+        //        let cell = tableView.cellForRow(at: indexPath) as! Cell
 
-//        cell.textLabel?.text = itemArray[indexPath.row].place
-//        cell.detailTextLabel?.text = itemArray[indexPath.row].country
-
-//        cell.imageView?.image = UIImage(systemName: "heart.fill")
+        
+//        // Separator index
+//                let separatorIndex = isFavourtie ? itemArray.count - 1 : recentSearch.count - 1
+//                if indexPath.row == separatorIndex {
+//                    isFavourtie ? cell.setNames(itemArray: favDetails) : cell.setSearchs(searchArray:  serachDetails)
+//                    cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+//                } else {
+//                    cell.separatorInset = UIEdgeInsets.zero
+//                }
+//        print(tempString)
+//        print(descripString)
 

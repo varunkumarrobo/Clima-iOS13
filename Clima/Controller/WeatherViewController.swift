@@ -12,6 +12,7 @@ class WeatherViewController: UIViewController{
     var  itemArray = [ WeatherDB ] ()
     var favoriteItems: [WeatherDB] = []
     
+    
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
@@ -132,10 +133,10 @@ class WeatherViewController: UIViewController{
         segmentedButtonControl.layer.borderWidth = 2
         segmentedButtonControl.backgroundColor = .clear
         segmentedButtonControl.setTitleTextAttributes([
-                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
                                                         NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
         segmentedButtonControl.setTitleTextAttributes([
-                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .bold),
+                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
                                                         NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
     }
     

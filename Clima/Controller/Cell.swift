@@ -9,7 +9,6 @@
 import UIKit
 
 class Cell: UITableViewCell {
-    
     //    var weatherManager = WeatherManager()
     @IBOutlet var cityLabel: UILabel!
     @IBOutlet var countryLabel: UILabel!
@@ -23,6 +22,11 @@ class Cell: UITableViewCell {
         countryLabel.text = itemArray.country
     }
     
+    func setSearchs(searchArray: RecentSearch)  {
+        cityLabel.text = searchArray.searchPlace
+        countryLabel.text = searchArray.searchCountry
+    }
+    
     func setDetails(favImage: UIImage,temp: Array<String>,descrip: Array<String>)  {
         favImaLabel.image = favImage
         tempLabel.text = temp[0]
@@ -30,23 +34,3 @@ class Cell: UITableViewCell {
     } 
     
 }
-//MARK: - WeatherManagerDelegate
-//extension Cell : WeatherManagerDelegate {
-//    func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)  {
-//        DispatchQueue.main.async {
-//            print("executed")
-//            self.tempLabel.text = weather.tempratureString
-//            self.favImaLabel.image = UIImage(named: weather.conditionName)
-////                UIImage(systemName: weather.conditionName)
-//
-//            self.descripLabel.text = weather.description
-//
-//            print(self.tempLabel.text!)
-//            print(self.descripLabel.text!)
-//        }
-//    }
-//
-//    func didFailError(error: Error) {
-//        print("edfgoyuregerp \(error)")
-//    }
-//}
