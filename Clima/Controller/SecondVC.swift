@@ -24,6 +24,7 @@ class SecondVC: UIViewController {
     var locations = [LocationforSearch]()
     var searchManager = SearchManager()
     var dataName = ""
+    var countryName = ""
     var delegate : passDataToVC!
     var suggestions = [String]()
     var searching = false
@@ -99,7 +100,6 @@ extension SecondVC : UITextFieldDelegate {
             let cityName = textField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
             searchManager.getSuggestions(search: cityName)
            
-//            newUser.setValue("john@example.com", forKeyPath: "email")
             return true
         } else {
             return false
@@ -120,18 +120,35 @@ extension SecondVC : UITextFieldDelegate {
         if let dataName = searchTextField.text{
             print(dataName)
             delegate.fetchWeatherFromSecondVC(str: dataName)
+            weatherManager.fetchWeather(cityName: dataName)
+            
         }
         
         if let suggestions = searchTextField.text{
                  searchManager.getSuggestions(search: suggestions)
+            
             let userEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: context)!
-            let newUser = NSManagedObject(entity: userEntity, insertInto: context)
-            newUser.setValue(searchTextField.text, forKeyPath: "searchPlace")
-            recentArray.append(newUser as! RecentSearch)
-            newUser.setValue(searchTextField.text, forKey: "searchCountry")
-            newUser.setValue(false, forKey: "isFav")
-            self.SaveSearch()
-            print("from second VC \(newUser)")
+
+            // Check if the item already exists in recentArray
+            let searchPlace = "\(String(searchTextField.text ?? "No Name for Search")),"
+            let searchCountry = countryName
+            let isFav = false
+            let existingItems = recentArray.filter {
+                item in
+                let place = item.value(forKey: "searchPlace") as? String
+                let country = item.value(forKey: "searchCountry") as? String
+                let fav = item.value(forKey: "isFav") as? Bool
+                return place == searchPlace && country == searchCountry && fav == isFav
+            }
+            if existingItems.isEmpty {
+                // Create and add a new item only if it doesn't already exist
+                let newUser = NSManagedObject(entity: userEntity, insertInto: context)
+                newUser.setValue(searchPlace, forKeyPath: "searchPlace")
+                newUser.setValue(searchCountry, forKey: "searchCountry")
+                newUser.setValue(isFav, forKey: "isFav")
+                recentArray.append(newUser as! RecentSearch)
+                self.SaveSearch()
+            }
             print("suggestions -> \(suggestions)")
         }
         searchTextField.text = ""

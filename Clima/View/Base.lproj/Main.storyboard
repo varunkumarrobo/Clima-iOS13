@@ -724,13 +724,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sNi-2c-540">
                                                     <rect key="frame" x="20" y="20" width="83" height="0.0"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JvY-Q4-pWo">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JvY-Q4-pWo">
                                                             <rect key="frame" x="0.0" y="0.0" width="41.5" height="0.0"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" red="1" green="0.89803921568627454" blue="0.22352941176470587" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="liN-1Z-rD0">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="liN-1Z-rD0">
                                                             <rect key="frame" x="41.5" y="0.0" width="41.5" height="0.0"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" red="1" green="0.8980392157" blue="0.22352941179999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -767,9 +767,6 @@
                                                             <state key="normal" title="Button">
                                                                 <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             </state>
-                                                            <connections>
-                                                                <action selector="deleteFavs:" destination="eso-cf-KBk" eventType="touchUpInside" id="YCF-vZ-P3G"/>
-                                                            </connections>
                                                         </button>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heart.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="rs8-tb-bCa">
                                                             <rect key="frame" x="13" y="11.5" width="30" height="22.5"/>
@@ -809,6 +806,7 @@
                                             <outlet property="countryLabel" destination="liN-1Z-rD0" id="t4t-1k-c5u"/>
                                             <outlet property="descripLabel" destination="lsk-Lj-Wmy" id="A57-hs-nus"/>
                                             <outlet property="favImaLabel" destination="A6j-t2-Mve" id="O9x-9X-Kmi"/>
+                                            <outlet property="favImageView" destination="rs8-tb-bCa" id="IWz-ZM-GdL"/>
                                             <outlet property="tempLabel" destination="0OZ-sE-TOQ" id="DFG-ca-0SE"/>
                                         </connections>
                                     </tableViewCell>
@@ -867,7 +865,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AXf-zj-AZN">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AXf-zj-AZN" userLabel="FavSearchButton">
                                         <rect key="frame" x="349" y="18.5" width="25" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="25" id="Gae-Tv-B2y"/>
@@ -877,17 +875,30 @@
                                         <state key="normal" backgroundImage="magnifyingglass" catalog="system">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="favSearchButton:" destination="eso-cf-KBk" eventType="touchUpInside" id="ItE-d9-GKg"/>
+                                        </connections>
                                     </button>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search for city" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mdL-Ag-H47">
+                                        <rect key="frame" x="70" y="10" width="279" height="40"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                    </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="mdL-Ag-H47" firstAttribute="top" secondItem="Cch-vj-2D7" secondAttribute="top" constant="10" id="3IT-LK-hmn"/>
                                     <constraint firstItem="p32-jU-v7E" firstAttribute="top" secondItem="Cch-vj-2D7" secondAttribute="top" constant="20" id="COi-cE-uNP"/>
+                                    <constraint firstItem="AXf-zj-AZN" firstAttribute="leading" secondItem="mdL-Ag-H47" secondAttribute="trailing" id="GUM-pK-ojD"/>
                                     <constraint firstItem="MhT-E8-Uuf" firstAttribute="centerY" secondItem="Cch-vj-2D7" secondAttribute="centerY" id="Hdn-3i-lMi"/>
                                     <constraint firstItem="AXf-zj-AZN" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="p32-jU-v7E" secondAttribute="trailing" constant="8" symbolic="YES" id="MpN-Hx-RtS"/>
+                                    <constraint firstItem="mdL-Ag-H47" firstAttribute="leading" secondItem="MhT-E8-Uuf" secondAttribute="trailing" constant="10" id="OO5-Ee-11I"/>
                                     <constraint firstItem="AXf-zj-AZN" firstAttribute="centerY" secondItem="p32-jU-v7E" secondAttribute="centerY" id="SzO-vi-anG"/>
                                     <constraint firstAttribute="trailing" secondItem="AXf-zj-AZN" secondAttribute="trailing" constant="40" id="UCH-tW-k1U"/>
                                     <constraint firstItem="MhT-E8-Uuf" firstAttribute="leading" secondItem="Cch-vj-2D7" secondAttribute="leading" constant="35" id="UJt-Hf-eQQ"/>
                                     <constraint firstAttribute="height" constant="60" id="X47-FC-664"/>
+                                    <constraint firstAttribute="bottom" secondItem="mdL-Ag-H47" secondAttribute="bottom" constant="10" id="ctD-BH-2MO"/>
                                     <constraint firstItem="p32-jU-v7E" firstAttribute="leading" secondItem="MhT-E8-Uuf" secondAttribute="trailing" constant="28" id="g70-X6-VQk"/>
                                     <constraint firstItem="AXf-zj-AZN" firstAttribute="baseline" secondItem="MhT-E8-Uuf" secondAttribute="baseline" id="ndz-LH-fQZ"/>
                                 </constraints>
@@ -916,8 +927,10 @@
                     <navigationItem key="navigationItem" id="tAz-e8-qJY"/>
                     <connections>
                         <outlet property="citiesAdded" destination="I2y-Tg-gPq" id="nvG-hR-kha"/>
+                        <outlet property="favSearchButton" destination="AXf-zj-AZN" id="mTC-LM-nNf"/>
                         <outlet property="numberOfCitisView" destination="tnw-sM-KKj" id="ONs-sA-Llw"/>
                         <outlet property="removeButtonText" destination="Nzv-pf-LmG" id="1Jf-i1-Vjz"/>
+                        <outlet property="searchFavAndRecent" destination="mdL-Ag-H47" id="OR1-p5-v3r"/>
                         <outlet property="tableView" destination="awh-Wj-0P8" id="1YD-D4-Eoi"/>
                         <outlet property="titleLabel" destination="p32-jU-v7E" id="7Su-wK-QYu"/>
                         <outlet property="toShowNothing" destination="zzO-Ed-fq8" id="uTI-IH-ndc"/>
@@ -927,22 +940,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W6B-Ku-rJx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1466.6666666666667" y="864.50892857142856"/>
-        </scene>
-        <!--RecentVC-->
-        <scene sceneID="vP7-Q7-KRf">
-            <objects>
-                <viewController id="Ne9-UN-aJb" customClass="RecentVC" customModule="Clima" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1Bn-1g-MzC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="0ai-2d-wUU"/>
-                        <color key="backgroundColor" red="0.25392916799999998" green="0.3737269044" blue="0.51912248130000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="clN-2r-Zuf"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dtS-3t-LEL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2767" y="875"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

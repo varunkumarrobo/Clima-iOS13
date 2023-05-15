@@ -10,12 +10,15 @@ import UIKit
 
 class Cell: UITableViewCell {
     //    var weatherManager = WeatherManager()
+    
     @IBOutlet var cityLabel: UILabel!
     @IBOutlet var countryLabel: UILabel!
     
     @IBOutlet var favImaLabel: UIImageView!
     @IBOutlet var tempLabel: UILabel!
     @IBOutlet var descripLabel: UILabel!
+    @IBOutlet var favImageView: UIImageView!
+    
     
     func setNames(itemArray: WeatherDB)  {
         cityLabel.text = itemArray.place

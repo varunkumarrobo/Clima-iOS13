@@ -11,6 +11,7 @@ class WeatherViewController: UIViewController{
     
     var  itemArray = [ WeatherDB ] ()
     var favoriteItems: [WeatherDB] = []
+    var recentArray = [ RecentSearch ] ()
     
     
     @IBOutlet weak var conditionImageView: UIImageView!
@@ -46,6 +47,7 @@ class WeatherViewController: UIViewController{
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     var secondVC = SecondVC()
+
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
     
@@ -78,12 +80,16 @@ class WeatherViewController: UIViewController{
         super.viewWillAppear(animated)
         updateDrawerUI()
         
+        
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         print("viewDidDisappear")
         drawerStatus = false
         updateDrawerUI()
+        
+        
         
     }
     
@@ -133,11 +139,11 @@ class WeatherViewController: UIViewController{
         segmentedButtonControl.layer.borderWidth = 2
         segmentedButtonControl.backgroundColor = .clear
         segmentedButtonControl.setTitleTextAttributes([
-                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-                                                        NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
+        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+         NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
         segmentedButtonControl.setTitleTextAttributes([
-                                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-                                                        NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+        NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
     }
     
     
@@ -177,34 +183,69 @@ class WeatherViewController: UIViewController{
     @IBAction func addToFav(_ sender: UIButton) {
         
         let newItem = WeatherDB(context: self.context)
-        newItem.place = cityLabel.text!
-        newItem.country = countryLabelSec.text!
-        
-        isFavourite = !isFavourite
-        if !isFavourite {
-            // Item doesn't exist, add it
-            sender.setTitle("Add to favourite", for: .normal)
-            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-            if isFavItem(cityName: newItem.place!, country: newItem.country!, itemArray: itemArray){
-                print("already Added")
+            newItem.place = cityLabel.text!
+            newItem.country = countryLabelSec.text!
+
+            isFavourite = !isFavourite
+            if !isFavourite {
+                // Item doesn't exist, add it
+                sender.setTitle("Add to favourite", for: .normal)
+                sender.setImage(UIImage(systemName: "heart"), for: .normal)
+                // Check if the item already exists in itemArray
+                let existingItems = itemArray.filter { item in
+                    return item.place?.lowercased() == newItem.place?.lowercased() && item.country!.lowercased() == newItem.country!.lowercased()
+                }
+                if existingItems.isEmpty {
+                    itemArray.append(newItem)
+                    saveItems()
+                    print("Item added to favorites")
+                } else {
+                    print("Item already exists")
+                }
             } else {
-                itemArray.append(newItem)
-                saveItems()
-                print("Item added to favorites")
+                // Item already exists, delete it
+                sender.setTitle("Remove from favourite", for: .normal)
+                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                if let index = itemArray.firstIndex(where: { $0.place == newItem.place && $0.country == newItem.country }) {
+                            let itemToRemove = itemArray[index]
+                            favoriteItems.removeAll { $0.place == newItem.place && $0.country == newItem.country }
+                            itemArray.remove(at: index)
+                            context.delete(itemToRemove)
+                            saveItems()
+                            print("Item removed from favorites")
+                        }
             }
-        } else {
-            // Item already exists, delete it
-            sender.setTitle("Remove from favourite", for: .normal)
-            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            if let index = favoriteItems.lastIndex(of: newItem) {
-                favoriteItems.remove(at: index)
-                itemArray.remove(at: index)
-                context.delete(favoriteItems.last!)
-                context.delete(itemArray.last!)
-                saveItems()
-                print("Item removed from favorites")
-            }
-        }
+
+        
+//        let newItem = WeatherDB(context: self.context)
+//        newItem.place = cityLabel.text!
+//        newItem.country = countryLabelSec.text!
+//
+//        isFavourite = !isFavourite
+//        if !isFavourite {
+//            // Item doesn't exist, add it
+//            sender.setTitle("Add to favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+//            if isFavItem(cityName: newItem.place!, country: newItem.country!, itemArray: itemArray){
+//                print("already Added")
+//            } else {
+//                itemArray.append(newItem)
+//                saveItems()
+//                print("Item added to favorites")
+//            }
+//        } else {
+//            // Item already exists, delete it
+//            sender.setTitle("Remove from favourite", for: .normal)
+//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            if let index = favoriteItems.lastIndex(of: newItem) {
+//                favoriteItems.remove(at: index)
+//                itemArray.remove(at: index)
+//                context.delete(favoriteItems.last!)
+//                context.delete(itemArray.last!)
+//                saveItems()
+//                print("Item removed from favorites")
+//            }
+//        }
     }
     
     func isFavItem(cityName: String,country: String,itemArray: Array<WeatherDB>) -> Bool {
@@ -220,6 +261,7 @@ class WeatherViewController: UIViewController{
         print("Pressed")
         drawerStatus = !drawerStatus
         updateDrawerUI()
+//        addSearchItems()
         print("did tap menu")
     }
     
@@ -242,6 +284,7 @@ class WeatherViewController: UIViewController{
             secondVC.loadViewIfNeeded()
             secondVC.delegate = self
             secondVC.dataName = cityLabel.text ?? "NO Name"
+            secondVC.countryName = countryLabel
         } else if segue.identifier == "goToFavourties" {
             if let destinationVC = segue.destination as? FavVC {
                 destinationVC.isFavourtie = true
@@ -338,7 +381,7 @@ extension WeatherViewController : WeatherManagerDelegate {
             print("executed")
             self.temperatureLabel.text = weather.tempratureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
-            self.cityLabel.text = "\(weather.cityName),\(self.countryLabel)"
+            self.cityLabel.text = "\(weather.cityName),"
             self.descriptionLabel.text = weather.description
             self.minMaxLabel.text = "\(weather.temp_min) - \(weather.temp_max)"
             self.humidityLabel.text = String(weather.humidity)
@@ -367,6 +410,7 @@ extension WeatherViewController : CountryDetailsDelegate {
     func didUpdateDetails(_ weatherManager: WeatherManager, details: CountryModel) {
         DispatchQueue.main.async {
             self.countryLabelSec.text = details.country
+            
             print(details.country)
         }
     }
@@ -478,194 +522,6 @@ extension WeatherViewController : CLLocationManagerDelegate {
 //        weatherManager.fetchWeather(cityName: city)
 //    }
 
-//MARK: - UITextFieldDelegate
-//extension WeatherViewController : UITextFieldDelegate {
-//
-//    @IBAction func searchButton(_ sender: UIButton) {
-//        searchTextField.endEditing(true)
-////        performSegue(withIdentifier: "goSearchVC", sender: self)
-//    }
-//
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        searchTextField.endEditing(true)
-////        print(searchTextField.text!)
-//        return true
-//    }
-//
-//    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-//        if textField.text != "" {
-//            return true
-//        } else{
-//            textField.placeholder = "Type Something"
-//            return false
-//        }
-//    }
-//
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        if let city = searchTextField.text{
-//            weatherManager.fetchWeather(cityName: city)
-//            print(city)
-//        }
-//        searchTextField.text = ""
-//    }
-//}
 
 
-//MARK:- CollectionView
-//extension WeatherViewController : UICollectionViewDelegate , UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 20
-//
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! MyCollectionCell
-//
-//        cell.imageView.image = UIImage(systemName: "thermometer")
-//        cell.labelOne.text = "20.25"
-//        cell.labelTwo.text = "14.57"
-//
-//        return cell
-//    }
-//
-//
-//    }
 
-//        if menuOut == false {
-//            leading.constant = -250
-//            trailing.constant = 250
-//            //            backgroundLeading.constant = 200
-//            //            backGroundTrailing.constant = -200
-//            drawerView.isHidden = false
-//            menuOut = true
-//        } else {
-//            leading.constant = 0
-//            trailing.constant = 0
-//            //            backgroundLeading.constant = 0
-//            //            backGroundTrailing.constant = 0
-//            drawerView.isHidden = true
-//            menuOut = false
-//        }
-
-//        UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn) {
-//            self.view.layoutIfNeeded()
-//        } completion: { (animationComplete) in
-//            print("animation complete")
-//        }
-
-
-//        isFavourite.toggle()
-//        if favoriteItems.contains(newItem) {
-//                // Item already exists, delete it
-//                sender.setTitle("Add to favorites", for: .normal)
-//                sender.setImage(UIImage(systemName: "heart"), for: .normal)
-//                if let index = favoriteItems.firstIndex(of: newItem) {
-//                    favoriteItems.remove(at: index)
-//                }
-//                context.delete(newItem)
-//                saveItems()
-//                print("Item removed from favorites")
-//            } else {
-//                // Item doesn't exist, add it
-//                sender.setTitle("Remove from favorites", for: .normal)
-//                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//                favoriteItems.append(newItem)
-//                saveItems()
-//                print("Item added to favorites")
-//            }
-
-//        func addFavorite() {
-//            // Execute an SQL INSERT statement to add the item as a favorite
-//            sender.setTitle("Remove from favourite", for: .normal)
-//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//            if let index = favoriteItems.firstIndex(of: newItem) {
-//                        favoriteItems.remove(at: index)
-//                    }
-//            self.itemArray.append(newItem)
-//            self.saveItems()
-//            print("Success")
-//            // Execute the SQL statement with your SQLite database connection
-//            // ...
-//        }
-//
-//        func deleteFavorite() {
-//            // Execute an SQL DELETE statement to remove the item from favorites
-//            sender.setTitle("Add to favourite", for: .normal)
-//            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-//            if let lastItem = itemArray.last {
-//                context.delete(lastItem)
-//                self.itemArray.removeLast()
-//            }
-//            print("Deleted")
-//            // Execute the SQL statement with your SQLite database connection
-//            // ...
-//        }
-//
-//        func checkIfFavorite() -> Bool {
-//            // Execute an SQL SELECT statement to check if the item is already a favorite
-//            if itemArray.contains(newItem) {
-//                return true
-//            } else {
-//                return false
-//            }
-//            // Execute the SQL statement with your SQLite database connection
-//            // ...
-//            // Check the result of the SELECT query to determine if the item is a favorite
-//            // Return true if the item is a favorite, false otherwise
-//        }
-//
-//        isFavourite.toggle()
-//
-//        if isFavourite {
-//            sender.setTitle("Remove from favourite", for: .normal)
-//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//            deleteFavorite()
-//            print("Deleted")
-//        } else {
-//            sender.setTitle("Add to favourite", for: .normal)
-//            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-//            addFavorite()
-//            print("Success")
-//        }
-
-//        let isFavorite = checkIfFavorite()
-//          isFavorite ? deleteFavorite() : addFavorite()
-
-//        if cityLabel.text == "" {
-//            print("empty")
-//        } else {
-//            self.itemArray.append(newItem)
-//        }
-
-//        func deleteFavorite(_ itemId: Array<Any>) {
-//            // Execute an SQL DELETE statement to remove the item from favorites
-//            sender.setTitle("Remove from favourite", for: .normal)
-//            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
-//                context.delete(itemArray[i])
-//                self.itemArray.removeLast()
-//            }
-//            print("Deleted")
-//            // Execute the SQL statement with your SQLite database connection
-//            // ...
-//        }
-
-//                        isFavourite = !isFavourite
-//                        if isFavourite {
-//                            sender.setTitle("Remove from favourite", for: .normal)
-//                            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-//                            for i in 0 ..< itemArray.count where i < itemArray.count-1 {
-//                                context.delete(itemArray[i])
-//                                itemArray.removeLast()
-//                            }
-//                            print("Deleted")
-//                        } else {
-//                            sender.setTitle("Add to favourite", for: .normal)
-//                            sender.setImage(UIImage(systemName: "heart"), for: .normal)
-//                            self.itemArray.append(newItem)
-//                            print("Sucess")
-//                        }
-
-//        self.saveItems()
-//        print("success")

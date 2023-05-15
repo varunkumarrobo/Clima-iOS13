@@ -24,8 +24,7 @@
 		D85A354729F8220D00823A80 /* background_android.png in Resources */ = {isa = PBXBuildFile; fileRef = D85A354629F8220C00823A80 /* background_android.png */; };
 		D887A89C2A0D19AE00810DD7 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D887A89B2A0D19AD00810DD7 /* SearchManager.swift */; };
 		D887A8A42A0E478C00810DD7 /* icon_nothing.png in Resources */ = {isa = PBXBuildFile; fileRef = D887A8A32A0E478B00810DD7 /* icon_nothing.png */; };
-		D8A99B8129F2BEF00022BFF0 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */; };
-		D8A99B8429F39E390022BFF0 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */; };
+		D8A125A02A1259E00069F3E4 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A1259F2A1259E00069F3E4 /* CustomButton.swift */; };
 		D8A99B8729F3A31D0022BFF0 /* RecentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */; };
 		D8A99B8A29F3A32D0022BFF0 /* FavVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A99B8929F3A32D0022BFF0 /* FavVC.swift */; };
 /* End PBXBuildFile section */
@@ -50,8 +49,7 @@
 		D85A354629F8220C00823A80 /* background_android.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_android.png; sourceTree = "<group>"; };
 		D887A89B2A0D19AD00810DD7 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		D887A8A32A0E478B00810DD7 /* icon_nothing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_nothing.png; sourceTree = "<group>"; };
-		D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
+		D8A1259F2A1259E00069F3E4 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentVC.swift; sourceTree = "<group>"; };
 		D8A99B8929F3A32D0022BFF0 /* FavVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +87,7 @@
 			children = (
 				ADAA27B0231BBFAF00365194 /* AppDelegate.swift */,
 				ADAA27B2231BBFAF00365194 /* SceneDelegate.swift */,
+				D8A125A22A1259F90069F3E4 /* Utilites */,
 				D8212D8429ED46AE00015D35 /* Models */,
 				ADAA27C9231BC3F200365194 /* View */,
 				ADAA27C8231BC3E500365194 /* Controller */,
@@ -105,7 +104,6 @@
 		ADAA27C8231BC3E500365194 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				D8719D1729F1364000D70E1E /* Drawer */,
 				ADAA27B4231BBFAF00365194 /* WeatherViewController.swift */,
 				D8212D6B29ED087500015D35 /* SecondVC.swift */,
 				D8A99B8629F3A31D0022BFF0 /* RecentVC.swift */,
@@ -135,13 +133,12 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		D8719D1729F1364000D70E1E /* Drawer */ = {
+		D8A125A22A1259F90069F3E4 /* Utilites */ = {
 			isa = PBXGroup;
 			children = (
-				D8A99B8029F2BEF00022BFF0 /* HomeViewController.swift */,
-				D8A99B8329F39E390022BFF0 /* ContainerViewController.swift */,
+				D8A1259F2A1259E00069F3E4 /* CustomButton.swift */,
 			);
-			path = Drawer;
+			path = Utilites;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,15 +216,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8A125A02A1259E00069F3E4 /* CustomButton.swift in Sources */,
 				ADAA27B5231BBFAF00365194 /* WeatherViewController.swift in Sources */,
 				D887A89C2A0D19AE00810DD7 /* SearchManager.swift in Sources */,
 				ADAA27B1231BBFAF00365194 /* AppDelegate.swift in Sources */,
-				D8A99B8429F39E390022BFF0 /* ContainerViewController.swift in Sources */,
 				D8212D8629ED46D400015D35 /* WeatherManager.swift in Sources */,
 				D8212D8D29ED6DB000015D35 /* WeatherModel.swift in Sources */,
 				D80A552629F93A430068452D /* Cell.swift in Sources */,
 				D8212D6C29ED087500015D35 /* SecondVC.swift in Sources */,
-				D8A99B8129F2BEF00022BFF0 /* HomeViewController.swift in Sources */,
 				D8212D8A29ED63EF00015D35 /* WeatherData.swift in Sources */,
 				D8A99B8A29F3A32D0022BFF0 /* FavVC.swift in Sources */,
 				ADAA27B3231BBFAF00365194 /* SceneDelegate.swift in Sources */,

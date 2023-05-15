@@ -18,9 +18,12 @@ class FavVC : UIViewController {
     @IBOutlet var toShowNothinglabel: UILabel!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var removeButtonText: UIButton!
+    @IBOutlet var searchFavAndRecent: UITextField!
+    @IBOutlet var favSearchButton: UIButton!
+    
+    
     
     var isFavourtie : Bool!
-    
     
     var weatherManager = WeatherManager()
     var imageString = ""
@@ -28,7 +31,10 @@ class FavVC : UIViewController {
     var descripString = ""
     
     var  itemArray : [WeatherDB] = []
+    var filteredItems = [String]()
     var recentSearch : [RecentSearch] = []
+    var filteredRecents = [String]()
+    var searching = false
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -43,16 +49,107 @@ class FavVC : UIViewController {
         }
         tableView.dataSource = self
         tableView.delegate = self
+        searchFavAndRecent.delegate = self
         updateCities()
         tableViewSetUp()
-        emptyView()
+//        emptyView()
         loadRecent()
+        searchFavAndRecent.isHidden = true
+        searchFavAndRecent.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        searchFavAndRecent.borderStyle = .none
+        searchFavAndRecent.layer.borderWidth = 0.0
+        searchFavAndRecent.layer.borderColor = UIColor.clear.cgColor
+    }
+    
+//    @objc func searchRecord() {
+//        if isFavourtie {
+//            self.filteredItems.removeAll()
+//            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
+//
+//            if searchData.isEmpty {
+//                searching = false
+//                filteredItems = itemArray.map { $0.place ?? "" }
+//            } else {
+//                searching = true
+//                filteredItems = itemArray.compactMap { $0.place?.lowercased().contains(searchData) ?? false ? $0.place : nil }
+//            }
+//        } else {
+//            self.filteredRecents.removeAll()
+//            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
+//
+//            if searchData.isEmpty {
+//                searching = false
+//                filteredRecents = recentSearch.map { $0.searchPlace ?? "" }
+//            } else {
+//                searching = true
+//                filteredRecents = recentSearch.compactMap { $0.searchPlace?.lowercased().contains(searchData) ?? false ? $0.searchPlace : nil }
+//            }
+//        }
+//
+//        tableView.reloadData()
+//    }
+    
+    @objc func searchRecord() {
+
+        if isFavourtie {
+            self.filteredItems.removeAll()
+            let searchData : Int = searchFavAndRecent.text!.count
+            if searchData != 0
+            {
+                searching = true
+                for items in itemArray
+                {
+                    if let itemToSearch = searchFavAndRecent.text
+                    {
+                        let range = items.place?.lowercased().range(of: itemToSearch, options: .caseInsensitive, range: nil, locale: nil)
+                        if range != nil
+                        {
+                            if let place = items.place {
+                                self.filteredItems.append(place)
+                            }
+                        }
+                    }
+                }
+            } else {
+                for items in itemArray {
+                    if let place = items.place {
+                        self.filteredItems.append(place)
+                    }
+                }
+                searching = false
+            }
+            tableView.reloadData()
+        } else {
+            self.filteredRecents.removeAll()
+            let searchData: Int = searchFavAndRecent.text!.count
+            if searchData != 0 {
+                searching = true
+                for items in recentSearch {
+                    if let itemToSearch = searchFavAndRecent.text {
+                        let range = items.searchPlace?.lowercased().range(of: itemToSearch, options: .caseInsensitive, range: nil, locale: nil)
+                        if range != nil {
+                            if let place = items.searchPlace {
+                                self.filteredRecents.append(place)
+                            }
+                        }
+                    }
+                }
+            } else {
+                for items in recentSearch {
+                    if let place = items.searchPlace {
+                        self.filteredRecents.append(place)
+                    }
+                }
+                searching = false
+            }
+            tableView.reloadData()
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
-        //        tableView.backgroundColor = UIColor.clear
-        //        toShowNothing.isHidden = false
         removeButtonText.setTitle(isFavourtie ? "Remove All" : "Clear All", for: .normal)
     }
     
@@ -79,6 +176,20 @@ class FavVC : UIViewController {
     }
     
     
+    
+    @IBAction func favSearchButton(_ sender: UIButton) {
+        
+        let isButtonOpen = sender.isSelected
+        
+        // Toggle the button state
+        sender.isSelected = !isButtonOpen
+        
+        //        sender.isButtonOpen = !sender.isButtonOpen
+        
+        searchFavAndRecent.isHidden = isButtonOpen ? true : false
+        
+    }
+    
     @IBAction func backButton(_ sender: UIButton) {
         navigationController?.popViewController(animated: true)
     }
@@ -102,7 +213,7 @@ class FavVC : UIViewController {
             
             itemArray.removeAll()
             saveItems()
-//            updateCities()
+            //            updateCities()
         }
         
         func clear(){
@@ -111,16 +222,13 @@ class FavVC : UIViewController {
             }
             recentSearch.removeAll()
             saveItems()
-//            updateCities()
+            //            updateCities()
         }
         
         isFavourtie ? remove() : clear()
         
     }
     
-    @IBAction func deleteFavs(_ sender: UIButton) {
-        
-    }
     
     //MARK: - Load Items From DataBase
     
@@ -138,7 +246,7 @@ class FavVC : UIViewController {
     }
     
     func loadRecent(with request : NSFetchRequest<RecentSearch> =  RecentSearch.fetchRequest())  {
-       
+        
         do{
             recentSearch = try context.fetch(request)
             //            print(recentSearch[0].searchPlace!)
@@ -192,10 +300,14 @@ extension FavVC : WeatherManagerDelegate {
 
 
 //MARK: - UITableViewDataSource, UITableViewDelegate
-extension FavVC : UITableViewDataSource,UITableViewDelegate {
+extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isFavourtie ? itemArray.count  : recentSearch.count
+        if searching {
+            return isFavourtie ? filteredItems.count  : filteredRecents.count
+        } else {
+            return isFavourtie ? itemArray.count  : recentSearch.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -206,21 +318,43 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate {
         let temp = tempString
         let desc = descripString
         
-        if isFavourtie {
-            let favoriteItem = itemArray[indexPath.row]
-                    cell.setNames(itemArray: favoriteItem)
-                    // Configure the cell using favoriteItem properties
-                } else {
-                    let recentSearchItem = recentSearch[indexPath.row]
-                    cell.setSearchs(searchArray: recentSearchItem)
-                    // Configure the cell using recentSearchItem properties
-                }
+        if searching {
+            if isFavourtie {
+                let favoriteItem = filteredItems[indexPath.row]
+                cell.cityLabel.text = favoriteItem
+                cell.favImaLabel.image = UIImage(systemName: image)
+                cell.tempLabel.text = temp
+                cell.descripLabel.text = desc
+                // Configure the cell using favoriteItem properties
+            } else {
+                let recentSearchItem = filteredRecents[indexPath.row]
+                cell.cityLabel.text = recentSearchItem
+                cell.favImaLabel.image = UIImage(systemName: image)
+                cell.tempLabel.text = temp
+                cell.descripLabel.text = desc
+                cell.favImageView.image = isFavourtie ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                // Configure the cell using recentSearchItem properties
+            }
+        } else {
+            if isFavourtie {
+                let favoriteItem = itemArray[indexPath.row]
+                cell.setNames(itemArray: favoriteItem)
+                cell.favImaLabel.image = UIImage(systemName: image)
+                cell.tempLabel.text = temp
+                cell.descripLabel.text = desc
+                // Configure the cell using favoriteItem properties
+            } else {
+                let recentSearchItem = recentSearch[indexPath.row]
+                cell.setSearchs(searchArray: recentSearchItem)
+                cell.favImaLabel.image = UIImage(systemName: image)
+                cell.tempLabel.text = temp
+                cell.descripLabel.text = desc
+                cell.favImageView.image = isFavourtie ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+                // Configure the cell using recentSearchItem properties
+            }
+        }
         
-        cell.favImaLabel.image = UIImage(systemName: image)
-        cell.tempLabel.text = temp
-        cell.descripLabel.text = desc
         cell.backgroundColor = UIColor.white.withAlphaComponent(0.2)
-        
         
         return cell
     }
@@ -238,21 +372,10 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate {
         self.tableView.reloadData()
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchFavAndRecent.resignFirstResponder()
+        return true
+    }
+    
 }
-
-        
-
-        //        let cell = tableView.cellForRow(at: indexPath) as! Cell
-
-        
-//        // Separator index
-//                let separatorIndex = isFavourtie ? itemArray.count - 1 : recentSearch.count - 1
-//                if indexPath.row == separatorIndex {
-//                    isFavourtie ? cell.setNames(itemArray: favDetails) : cell.setSearchs(searchArray:  serachDetails)
-//                    cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
-//                } else {
-//                    cell.separatorInset = UIEdgeInsets.zero
-//                }
-//        print(tempString)
-//        print(descripString)
 
