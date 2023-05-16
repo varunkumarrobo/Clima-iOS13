@@ -130,7 +130,7 @@ extension SecondVC : UITextFieldDelegate {
             let userEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: context)!
 
             // Check if the item already exists in recentArray
-            let searchPlace = "\(String(searchTextField.text ?? "No Name for Search")),"
+            let searchPlace = "\(String(searchTextField.text ?? "No Name for Search"))"
             let searchCountry = countryName
             let isFav = false
             let existingItems = recentArray.filter {

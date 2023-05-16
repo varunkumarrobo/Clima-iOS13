@@ -222,7 +222,7 @@ class FavVC : UIViewController {
             //            updateCities()
         }
         
-        func clear(){
+        func clear() {
             for i in 0 ..< recentSearch.count  where i < recentSearch.count-0 {
                 context.delete(recentSearch[i])
             }
@@ -369,23 +369,20 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
-        
-        
-        
-        
-        context.delete(itemArray[indexPath.item])
-        itemArray.remove(at: indexPath.row)
-        
-        saveItems()
-        updateCities()
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        self.tableView.reloadData()
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//
+////        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
+//
+//        context.delete(itemArray[indexPath.item])
+//        itemArray.remove(at: indexPath.row)
+//
+//        saveItems()
+//        updateCities()
+//
+//        tableView.deselectRow(at: indexPath, animated: true)
+//
+//        self.tableView.reloadData()
+//    }
     
    
     
