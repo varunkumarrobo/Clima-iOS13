@@ -48,7 +48,6 @@ class WeatherViewController: UIViewController{
     let locationManager = CLLocationManager()
     var secondVC = SecondVC()
 
-    
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -61,9 +60,9 @@ class WeatherViewController: UIViewController{
         
         weatherManager.delegate = self
         weatherManager.delegateSec = self
-        
         secondVC.delegate = self
         locationManager.delegate = self
+        
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
@@ -80,16 +79,12 @@ class WeatherViewController: UIViewController{
         super.viewWillAppear(animated)
         updateDrawerUI()
         
-        
-        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         print("viewDidDisappear")
         drawerStatus = false
         updateDrawerUI()
-        
-        
         
     }
     
@@ -108,6 +103,7 @@ class WeatherViewController: UIViewController{
             print("Error loading favorite items: \(error)")
         }
     }
+    
     //MARK: - DataBase Related Functions
     
     func saveItems() {
@@ -133,22 +129,33 @@ class WeatherViewController: UIViewController{
     
     func segmentedControl()  {
         segmentedButtonControl.backgroundColor = .clear
-        segmentedButtonControl.tintColor = .clear
-        segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
-        segmentedButtonControl.layer.cornerRadius = 0
-        segmentedButtonControl.layer.borderWidth = 2
-        segmentedButtonControl.backgroundColor = .clear
-        segmentedButtonControl.setTitleTextAttributes([
-        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-         NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red], for: .selected)
-        segmentedButtonControl.setTitleTextAttributes([
-        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-        NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+            segmentedButtonControl.tintColor = .clear
+            segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
+            
+            // Set the corner radius to make it square
+            segmentedButtonControl.layer.cornerRadius = 0
+            
+            // Set the border width
+            segmentedButtonControl.layer.borderWidth = 2
+            
+            // Make sure the segments fill the control horizontally
+            segmentedButtonControl.apportionsSegmentWidthsByContent = true
+            
+            segmentedButtonControl.backgroundColor = .clear
+            
+            segmentedButtonControl.setTitleTextAttributes([
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+                NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red
+            ], for: .selected)
+            
+            segmentedButtonControl.setTitleTextAttributes([
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+                NSAttributedString.Key.foregroundColor: UIColor.white
+            ], for: .normal)
     }
     
     
     //MARK: - UI Desgin Related Functions
-    
     
     func updateDrawerUI() {
         UIView.animate(withDuration: 0.75) {

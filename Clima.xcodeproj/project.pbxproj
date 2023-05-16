@@ -95,7 +95,6 @@
 				D85A354629F8220C00823A80 /* background_android.png */,
 				D887A8A32A0E478B00810DD7 /* icon_nothing.png */,
 				D8212D5F29E80CFC00015D35 /* logo.png */,
-				ADAA27BB231BBFB300365194 /* LaunchScreen.storyboard */,
 				ADAA27BE231BBFB300365194 /* Info.plist */,
 			);
 			path = Clima;
@@ -117,6 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				ADAA27B6231BBFAF00365194 /* Main.storyboard */,
+				ADAA27BB231BBFB300365194 /* LaunchScreen.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";

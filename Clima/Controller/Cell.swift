@@ -18,11 +18,17 @@ class Cell: UITableViewCell {
     @IBOutlet var tempLabel: UILabel!
     @IBOutlet var descripLabel: UILabel!
     @IBOutlet var favImageView: UIImageView!
+    @IBOutlet var favButton: UIButton!
     
     
     func setNames(itemArray: WeatherDB)  {
         cityLabel.text = itemArray.place
         countryLabel.text = itemArray.country
+    }
+    
+    
+    @IBAction func favButton(_ sender: UIButton) {
+        print("Fav Button at Favourties Page..")
     }
     
     func setSearchs(searchArray: RecentSearch)  {

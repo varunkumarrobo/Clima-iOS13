@@ -710,12 +710,12 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_android.png" translatesAutoresizingMaskIntoConstraints="NO" id="Sd2-rd-d2k">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="awh-Wj-0P8">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorInsetReference="fromAutomaticInsets" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="awh-Wj-0P8">
                                 <rect key="frame" x="16" y="162" width="378" height="664"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" alpha="0.20000000000000001" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="100" id="kdl-jf-4Jh" customClass="Cell" customModule="Clima" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="378" height="100"/>
+                                        <rect key="frame" x="0.0" y="55.5" width="378" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kdl-jf-4Jh" id="S1s-oM-IhN">
                                             <rect key="frame" x="0.0" y="0.0" width="378" height="100"/>
@@ -767,6 +767,9 @@
                                                             <state key="normal" title="Button">
                                                                 <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="favButton:" destination="kdl-jf-4Jh" eventType="touchUpInside" id="5V2-RY-gDT"/>
+                                                            </connections>
                                                         </button>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heart.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="rs8-tb-bCa">
                                                             <rect key="frame" x="13" y="11.5" width="30" height="22.5"/>
@@ -805,6 +808,7 @@
                                             <outlet property="cityLabel" destination="JvY-Q4-pWo" id="1VF-Pc-bQJ"/>
                                             <outlet property="countryLabel" destination="liN-1Z-rD0" id="t4t-1k-c5u"/>
                                             <outlet property="descripLabel" destination="lsk-Lj-Wmy" id="A57-hs-nus"/>
+                                            <outlet property="favButton" destination="2OM-bY-Qd0" id="Pia-SA-cZ0"/>
                                             <outlet property="favImaLabel" destination="A6j-t2-Mve" id="O9x-9X-Kmi"/>
                                             <outlet property="favImageView" destination="rs8-tb-bCa" id="IWz-ZM-GdL"/>
                                             <outlet property="tempLabel" destination="0OZ-sE-TOQ" id="DFG-ca-0SE"/>
@@ -865,7 +869,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AXf-zj-AZN" userLabel="FavSearchButton">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AXf-zj-AZN" userLabel="FavSearchButton">
                                         <rect key="frame" x="349" y="18.5" width="25" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="25" id="Gae-Tv-B2y"/>

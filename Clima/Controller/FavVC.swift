@@ -52,7 +52,7 @@ class FavVC : UIViewController {
         searchFavAndRecent.delegate = self
         updateCities()
         tableViewSetUp()
-//        emptyView()
+        emptyView()
         loadRecent()
         searchFavAndRecent.isHidden = true
         searchFavAndRecent.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
@@ -62,38 +62,39 @@ class FavVC : UIViewController {
         searchFavAndRecent.borderStyle = .none
         searchFavAndRecent.layer.borderWidth = 0.0
         searchFavAndRecent.layer.borderColor = UIColor.clear.cgColor
+
     }
     
-//    @objc func searchRecord() {
-//        if isFavourtie {
-//            self.filteredItems.removeAll()
-//            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
-//
-//            if searchData.isEmpty {
-//                searching = false
-//                filteredItems = itemArray.map { $0.place ?? "" }
-//            } else {
-//                searching = true
-//                filteredItems = itemArray.compactMap { $0.place?.lowercased().contains(searchData) ?? false ? $0.place : nil }
-//            }
-//        } else {
-//            self.filteredRecents.removeAll()
-//            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
-//
-//            if searchData.isEmpty {
-//                searching = false
-//                filteredRecents = recentSearch.map { $0.searchPlace ?? "" }
-//            } else {
-//                searching = true
-//                filteredRecents = recentSearch.compactMap { $0.searchPlace?.lowercased().contains(searchData) ?? false ? $0.searchPlace : nil }
-//            }
-//        }
-//
-//        tableView.reloadData()
-//    }
+    //    @objc func searchRecord() {
+    //        if isFavourtie {
+    //            self.filteredItems.removeAll()
+    //            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
+    //
+    //            if searchData.isEmpty {
+    //                searching = false
+    //                filteredItems = itemArray.map { $0.place ?? "" }
+    //            } else {
+    //                searching = true
+    //                filteredItems = itemArray.compactMap { $0.place?.lowercased().contains(searchData) ?? false ? $0.place : nil }
+    //            }
+    //        } else {
+    //            self.filteredRecents.removeAll()
+    //            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
+    //
+    //            if searchData.isEmpty {
+    //                searching = false
+    //                filteredRecents = recentSearch.map { $0.searchPlace ?? "" }
+    //            } else {
+    //                searching = true
+    //                filteredRecents = recentSearch.compactMap { $0.searchPlace?.lowercased().contains(searchData) ?? false ? $0.searchPlace : nil }
+    //            }
+    //        }
+    //
+    //        tableView.reloadData()
+    //    }
     
     @objc func searchRecord() {
-
+        
         if isFavourtie {
             self.filteredItems.removeAll()
             let searchData : Int = searchFavAndRecent.text!.count
@@ -163,12 +164,12 @@ class FavVC : UIViewController {
     }
     
     func emptyView()  {
-        if itemArray.count == 0 {
+        if itemArray.count == 0 && recentSearch.count == 0 {
             tableView.isHidden = true
             numberOfCitisView.isHidden = true
             //            toShowNothing.isHidden = false
             //            toShowNothinglabel.isHidden = false
-        } else if itemArray.count > 0 {
+        } else if itemArray.count > 0 && recentSearch.count > 0 {
             //            toShowNothing.isHidden = false
             tableView.isHidden = false
             numberOfCitisView.isHidden = false
@@ -184,7 +185,12 @@ class FavVC : UIViewController {
         // Toggle the button state
         sender.isSelected = !isButtonOpen
         
-        //        sender.isButtonOpen = !sender.isButtonOpen
+        sender.setBackgroundImage(isButtonOpen ? UIImage(systemName: "magnifyingglass") : UIImage(systemName: "xmark"), for: .normal)
+        
+//        if searchFavAndRecent.isHidden == true {
+//            searchFavAndRecent.text = ""
+//            tableView.reloadData()
+//        }
         
         searchFavAndRecent.isHidden = isButtonOpen ? true : false
         
@@ -302,12 +308,16 @@ extension FavVC : WeatherManagerDelegate {
 //MARK: - UITableViewDataSource, UITableViewDelegate
 extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         if searching {
             return isFavourtie ? filteredItems.count  : filteredRecents.count
         } else {
             return isFavourtie ? itemArray.count  : recentSearch.count
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -320,14 +330,14 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         
         if searching {
             if isFavourtie {
-                let favoriteItem = filteredItems[indexPath.row]
+                let favoriteItem = filteredItems[indexPath.section]
                 cell.cityLabel.text = favoriteItem
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
                 cell.descripLabel.text = desc
                 // Configure the cell using favoriteItem properties
             } else {
-                let recentSearchItem = filteredRecents[indexPath.row]
+                let recentSearchItem = filteredRecents[indexPath.section]
                 cell.cityLabel.text = recentSearchItem
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
@@ -337,14 +347,14 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
             }
         } else {
             if isFavourtie {
-                let favoriteItem = itemArray[indexPath.row]
+                let favoriteItem = itemArray[indexPath.section]
                 cell.setNames(itemArray: favoriteItem)
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
                 cell.descripLabel.text = desc
                 // Configure the cell using favoriteItem properties
             } else {
-                let recentSearchItem = recentSearch[indexPath.row]
+                let recentSearchItem = recentSearch[indexPath.section]
                 cell.setSearchs(searchArray: recentSearchItem)
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
@@ -361,6 +371,11 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
+        
+        
+        
+        
         context.delete(itemArray[indexPath.item])
         itemArray.remove(at: indexPath.row)
         
@@ -371,6 +386,13 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         
         self.tableView.reloadData()
     }
+    
+   
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.5
+       }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchFavAndRecent.resignFirstResponder()
