@@ -26,7 +26,7 @@ class SecondVC: UIViewController {
     var dataName = ""
     var countryName = ""
     var delegate : passDataToVC!
-    var suggestions = [String]()
+//    var suggestions = [String]()
     var searching = false
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -66,10 +66,9 @@ class SecondVC: UIViewController {
         navBarView.layer.addSublayer(bottomBorder)
     }
     
-    //MARK:- Save to DataBase
+//MARK: - Save to DataBase
     
     func SaveSearch() {
-        // Save the changes
         do {
             try context.save()
         } catch let error as NSError {
@@ -79,7 +78,7 @@ class SecondVC: UIViewController {
     
 }
 
-//MARK:- SearchManagerDelegate
+//MARK: - SearchManagerDelegate
 extension SecondVC : SearchManagerDelegate{
     func updateTableView(locationList: [LocationforSearch]) {
         DispatchQueue.main.async{
@@ -99,7 +98,6 @@ extension SecondVC : UITextFieldDelegate {
             textField.resignFirstResponder()
             let cityName = textField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
             searchManager.getSuggestions(search: cityName)
-           
             return true
         } else {
             return false
@@ -124,11 +122,10 @@ extension SecondVC : UITextFieldDelegate {
             
         }
         
+        //Adding search's to the recentSearchDatabase
         if let suggestions = searchTextField.text{
                  searchManager.getSuggestions(search: suggestions)
-            
             let userEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: context)!
-
             // Check if the item already exists in recentArray
             let searchPlace = "\(String(searchTextField.text ?? "No Name for Search"))"
             let searchCountry = countryName
@@ -156,7 +153,7 @@ extension SecondVC : UITextFieldDelegate {
     
 }
 
-//MARK:- UITableView
+//MARK: - UITableView
 extension SecondVC : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -177,81 +174,3 @@ extension SecondVC : UITableViewDelegate, UITableViewDataSource {
     
 }
 
-
-
-/*
-// MARK: - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    // Get the new view controller using segue.destination.
-    // Pass the selected object to the new view controller.
-}
-*/
-
-
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//
-//      if textField == searchTextField {
-//            tableViewSetUp()
-//            tableView.delegate = self
-//            tableView.dataSource = self
-//            tableView.tag = 18
-//            tableView.rowHeight = 80
-//            view.addSubview(tableView)
-//            tableViewAnimated(load: true)
-//        }
-//    }
-
-//    func tableViewSetUp() {
-//        tableView.frame = CGRect(x: 20, y: view.frame.height, width: view.frame.width - 40, height: view.frame.height - 170)
-//        tableView.layer.shadowColor = UIColor.white.cgColor
-//        tableView.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)
-//        tableView.layer.shadowOpacity = 1.0
-//        tableView.layer.shadowRadius = 2.0
-//        tableView.layer.masksToBounds = true
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "selectCountry")
-//    }
-    
-//    func tableViewAnimated(load:Bool) {
-//        if load{
-//            UIView.animate(withDuration: 0.2) {
-//                self.tableView.frame = CGRect(x: 20, y: 170, width: self.view.frame.width - 40, height: self.view.frame.height - 170)
-//            }
-//        } else {
-//            UIView.animate(withDuration: 0.2) {
-//                self.tableView.frame = CGRect(x: 20, y: 170, width: self.view.frame.width - 40, height: self.view.frame.height - 170)
-//            } completion: { (done) in
-//                for subView in self.view.subviews{
-//                    if subView.tag == 18 {
-//                        subView.removeFromSuperview()
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
-
-//        self.suggestions.removeAll()
-//        let searchData : Int = searchTextField.text!.count
-//        if searchData != 0 {
-//            searching = true
-//            for suggest in testArray {
-//                if let nameToSearch = searchTextField.text{
-//                    let range = suggest.lowercased().range(of: nameToSearch, options: .caseInsensitive, range: nil, locale: nil)
-//                    if range != nil {
-//                        self.suggestions.append(suggest)
-//                    }
-//                }
-//            }
-//        } else {
-//            suggestions = testArray
-//            searching = false
-//        }
-//        tableView.reloadData()
-
-//        if searching {
-//            cell.textLabel?.text = suggestions[indexPath.row]
-//        }else{
-//            cell.textLabel?.text = testArray[indexPath.row]
-//        }

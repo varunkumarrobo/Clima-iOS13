@@ -14,14 +14,11 @@ class FavVC : UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var citiesAdded: UILabel!
     @IBOutlet var numberOfCitisView: UIStackView!
-    @IBOutlet var toShowNothing: UIImageView!
-    @IBOutlet var toShowNothinglabel: UILabel!
+    
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var removeButtonText: UIButton!
     @IBOutlet var searchFavAndRecent: UITextField!
     @IBOutlet var favSearchButton: UIButton!
-    
-    
     
     var isFavourtie : Bool!
     
@@ -34,6 +31,7 @@ class FavVC : UIViewController {
     var filteredItems = [String]()
     var recentSearch : [RecentSearch] = []
     var filteredRecents = [String]()
+    
     var searching = false
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -42,18 +40,21 @@ class FavVC : UIViewController {
         super.viewDidLoad()
         
         weatherManager.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
+        searchFavAndRecent.delegate = self
+        
         titleLabel.text = isFavourtie ? "Favourties" : "Recent Search"
         loadItems()
         for i in 0 ..< itemArray.count {
             weatherManager.fetchWeather(cityName: itemArray[i].place ?? "London")
         }
-        tableView.dataSource = self
-        tableView.delegate = self
-        searchFavAndRecent.delegate = self
+        
         updateCities()
         tableViewSetUp()
         emptyView()
         loadRecent()
+        emptyViewForRecent()
         searchFavAndRecent.isHidden = true
         searchFavAndRecent.addTarget(self, action: #selector(searchRecord), for: .editingChanged)
     }
@@ -62,37 +63,14 @@ class FavVC : UIViewController {
         searchFavAndRecent.borderStyle = .none
         searchFavAndRecent.layer.borderWidth = 0.0
         searchFavAndRecent.layer.borderColor = UIColor.clear.cgColor
-
     }
     
-    //    @objc func searchRecord() {
-    //        if isFavourtie {
-    //            self.filteredItems.removeAll()
-    //            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
-    //
-    //            if searchData.isEmpty {
-    //                searching = false
-    //                filteredItems = itemArray.map { $0.place ?? "" }
-    //            } else {
-    //                searching = true
-    //                filteredItems = itemArray.compactMap { $0.place?.lowercased().contains(searchData) ?? false ? $0.place : nil }
-    //            }
-    //        } else {
-    //            self.filteredRecents.removeAll()
-    //            let searchData: String = searchFavAndRecent.text?.lowercased() ?? ""
-    //
-    //            if searchData.isEmpty {
-    //                searching = false
-    //                filteredRecents = recentSearch.map { $0.searchPlace ?? "" }
-    //            } else {
-    //                searching = true
-    //                filteredRecents = recentSearch.compactMap { $0.searchPlace?.lowercased().contains(searchData) ?? false ? $0.searchPlace : nil }
-    //            }
-    //        }
-    //
-    //        tableView.reloadData()
-    //    }
+    override func viewWillAppear(_ animated: Bool) {
+        removeButtonText.setTitle(isFavourtie ? "Remove All" : "Clear All", for: .normal)
+        updateCities()
+    }
     
+    //MARK: - search record for local searchs
     @objc func searchRecord() {
         
         if isFavourtie {
@@ -150,10 +128,7 @@ class FavVC : UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        removeButtonText.setTitle(isFavourtie ? "Remove All" : "Clear All", for: .normal)
-    }
-    
+    //MARK: - UI View Setups
     func tableViewSetUp() {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.backgroundColor = UIColor.clear
@@ -164,20 +139,115 @@ class FavVC : UIViewController {
     }
     
     func emptyView()  {
-        if itemArray.count == 0 && recentSearch.count == 0 {
-            tableView.isHidden = true
-            numberOfCitisView.isHidden = true
-            //            toShowNothing.isHidden = false
-            //            toShowNothinglabel.isHidden = false
-        } else if itemArray.count > 0 && recentSearch.count > 0 {
-            //            toShowNothing.isHidden = false
-            tableView.isHidden = false
-            numberOfCitisView.isHidden = false
+        
+        if isFavourtie {
+            if itemArray.count == 0 {
+                // Show view for favorites
+                let favoritesView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+                favoritesView.backgroundColor = UIColor.clear
+                favoritesView.center = self.view.center // Position the favoritesView in the center of the background view
+                
+                let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+                imageView.image = UIImage(named: "icon_nothing.png") // Replace "your_image_name" with the actual image name
+                imageView.contentMode = .scaleAspectFit
+                imageView.center = CGPoint(x: favoritesView.bounds.midX, y: favoritesView.bounds.midY - 20) // Adjust the position of the image
+                
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 30))
+                label.text = "No Favourties added"
+                label.textAlignment = .center
+                label.textColor = UIColor.white
+                label.center = CGPoint(x: favoritesView.bounds.midX, y: favoritesView.bounds.midY + 50) // Adjust the position of the label
+                
+                favoritesView.addSubview(imageView)
+                favoritesView.addSubview(label)
+                
+                // Present the favoritesView
+                self.view.addSubview(favoritesView)
+                
+                // Hide other views if necessary
+                tableView.isHidden = true
+                numberOfCitisView.isHidden = true
+            } else {
+                // Show the table view and other views
+                tableView.isHidden = false
+                numberOfCitisView.isHidden = false
+            }
+        }
+        //        else {
+        //                if recentSearch.count > 0 {
+        //                    // Show view for recent searches
+        //                    let recentSearchesView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 100))
+        //                    recentSearchesView.backgroundColor = UIColor.lightGray
+        //                    recentSearchesView.center = self.view.center // Position the recentSearchesView in the center of the background view
+        //
+        //                    let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 30))
+        //                    label.text = "View for recent searches"
+        //                    label.textAlignment = .center
+        //                    label.center = CGPoint(x: recentSearchesView.bounds.midX, y: recentSearchesView.bounds.midY)
+        //                    recentSearchesView.addSubview(label)
+        //
+        //                    // Present the recentSearchesView
+        //                    self.view.addSubview(recentSearchesView)
+        //
+        //                    // Hide other views if necessary
+        //                    tableView.isHidden = true
+        //                    numberOfCitisView.isHidden = true
+        //                } else {
+        //                    // Show the table view and other views
+        //                    tableView.isHidden = false
+        //                    numberOfCitisView.isHidden = false
+        //                }
+        //            }
+    }
+    
+    func emptyViewForRecent() {
+        if !isFavourtie {
+            if recentSearch.count == 0 {
+                
+                let recentSearchesView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+                recentSearchesView.backgroundColor = UIColor.clear
+                recentSearchesView.center = self.view.center // Position the recentSearchesView in the center of the background view
+                
+                let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+                imageView.image = UIImage(named: "icon_nothing.png") // Replace "your_image_name" with the actual image name
+                imageView.contentMode = .scaleAspectFit
+                imageView.center = CGPoint(x: recentSearchesView.bounds.midX, y: recentSearchesView.bounds.midY - 20) // Adjust the position of the image
+                
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 30))
+                label.text = "No Recent Search"
+                label.textAlignment = .center
+                label.textColor = UIColor.white
+                label.center = CGPoint(x: recentSearchesView.bounds.midX, y: recentSearchesView.bounds.midY + 50) // Adjust the position of the label
+                
+                recentSearchesView.addSubview(imageView)
+                recentSearchesView.addSubview(label)
+                
+                // Present the recentSearchesView
+                self.view.addSubview(recentSearchesView)
+                
+                
+                // Hide other views if necessary
+                tableView.isHidden = true
+                numberOfCitisView.isHidden = true
+            } else {
+                // Show the table view and other views
+                tableView.isHidden = false
+                numberOfCitisView.isHidden = false
+            }
         }
     }
     
+    func updateCities()  {
+        citiesAdded.text = ""
+        if itemArray.count == 1 || recentSearch.count == 1 {
+            citiesAdded.text =  isFavourtie ? "\(itemArray.count) City added as favourite" : "You recently searched for"
+        }
+        if itemArray.count > 1 || recentSearch.count > 1 {
+            citiesAdded.text = isFavourtie ? "\(itemArray.count) Citie's added as favourite" : " You recently searched for"
+        }
+    }
     
-    
+    //MARK: - Button Related functions
     @IBAction func favSearchButton(_ sender: UIButton) {
         
         let isButtonOpen = sender.isSelected
@@ -187,11 +257,6 @@ class FavVC : UIViewController {
         
         sender.setBackgroundImage(isButtonOpen ? UIImage(systemName: "magnifyingglass") : UIImage(systemName: "xmark"), for: .normal)
         
-//        if searchFavAndRecent.isHidden == true {
-//            searchFavAndRecent.text = ""
-//            tableView.reloadData()
-//        }
-        
         searchFavAndRecent.isHidden = isButtonOpen ? true : false
         
     }
@@ -200,38 +265,38 @@ class FavVC : UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    func updateCities()  {
-        citiesAdded.text = ""
-        if itemArray.count == 1 {
-            citiesAdded.text =  isFavourtie ? "\(itemArray.count) City added as favourite" : "You recently searched for"
-        }
-        if itemArray.count > 1 {
-            citiesAdded.text = isFavourtie ? "\(itemArray.count) Citie's added as favourite" : "You recently searched for"
-        }
-    }
-    
     @IBAction func removeAll(_ sender: UIButton) {
         
-        func remove() {
-            for i in 0 ..< itemArray.count  where i < itemArray.count-0 {
-                context.delete(itemArray[i])
-            }
-            
-            itemArray.removeAll()
-            saveItems()
-            //            updateCities()
+        let alert = UIAlertController(title: isFavourtie ? "Are you sure you want to remove all the favourites?" : "Are you sure you want to clear all the recent searches?", message: "", preferredStyle: .alert)
+
+        let noAction = UIAlertAction(title: "No", style: .default) { (action) in
+            self.dismiss(animated: true)
+            print("No action tapped")
+            // Perform any additional actions or UI updates when "No" is tapped
         }
-        
-        func clear() {
-            for i in 0 ..< recentSearch.count  where i < recentSearch.count-0 {
-                context.delete(recentSearch[i])
+
+        let yesAction = UIAlertAction(title: "Yes", style: .destructive) { (action) in
+            if self.isFavourtie {
+                for i in 0 ..< self.itemArray.count where i < self.itemArray.count - 0 {
+                    self.context.delete(self.itemArray[i])
+                }
+                self.itemArray.removeAll()
+            } else {
+                for i in 0 ..< self.recentSearch.count where i < self.recentSearch.count - 0 {
+                    self.context.delete(self.recentSearch[i])
+                }
+                self.recentSearch.removeAll()
             }
-            recentSearch.removeAll()
-            saveItems()
-            //            updateCities()
+            self.saveItems()
+            self.dismiss(animated: true)
+            print("Yes action tapped")
+            // Perform any additional actions or UI updates after removing or clearing the data
         }
-        
-        isFavourtie ? remove() : clear()
+
+        alert.addAction(noAction)
+        alert.addAction(yesAction)
+
+        present(alert, animated: true, completion: nil)
         
     }
     
@@ -275,7 +340,7 @@ class FavVC : UIViewController {
     
 }
 
-//MARK:- FetchWeatherFromSearchVC
+//MARK: - FetchWeatherFromSearchVC
 
 extension FavVC : passDataToVC {
     func fetchWeatherFromSecondVC(str: String) {
@@ -369,27 +434,24 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-////        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
-//
-//        context.delete(itemArray[indexPath.item])
-//        itemArray.remove(at: indexPath.row)
-//
-//        saveItems()
-//        updateCities()
-//
-//        tableView.deselectRow(at: indexPath, animated: true)
-//
-//        self.tableView.reloadData()
-//    }
-    
-   
+    //    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    //
+    ////        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! Cell
+    //
+    //        context.delete(itemArray[indexPath.item])
+    //        itemArray.remove(at: indexPath.row)
+    //
+    //        saveItems()
+    //        updateCities()
+    //
+    //        tableView.deselectRow(at: indexPath, animated: true)
+    //
+    //        self.tableView.reloadData()
+    //    }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0.5
-       }
-    
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchFavAndRecent.resignFirstResponder()
@@ -397,4 +459,3 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
     }
     
 }
-

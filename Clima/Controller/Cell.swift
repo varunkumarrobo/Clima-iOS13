@@ -22,17 +22,22 @@ class Cell: UITableViewCell {
     
     
     func setNames(itemArray: WeatherDB)  {
-        cityLabel.text = itemArray.place
+        cityLabel.text = "\(String(format: itemArray.place!)),"
         countryLabel.text = itemArray.country
     }
     
+    func setDetails(modelArray: WeatherModel){
+        tempLabel.text = String(modelArray.temp)
+        favImaLabel.image = UIImage(systemName: modelArray.conditionName)
+        descripLabel.text = modelArray.description
+    }
     
     @IBAction func favButton(_ sender: UIButton) {
         print("Fav Button at Favourties Page..")
     }
     
     func setSearchs(searchArray: RecentSearch)  {
-        cityLabel.text = searchArray.searchPlace
+        cityLabel.text = "\(String(format: searchArray.searchPlace!))"
         countryLabel.text = searchArray.searchCountry
     }
     
