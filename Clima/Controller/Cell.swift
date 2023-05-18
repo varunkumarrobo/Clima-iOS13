@@ -8,10 +8,6 @@
 
 import UIKit
 
-//protocol CustomTableViewCellDelegate: AnyObject {
-//    func customTableViewCell(_ cell: Cell, didTapDeleteAt indexPath: IndexPath)
-//}
-
 class Cell: UITableViewCell {
     
     
@@ -23,9 +19,6 @@ class Cell: UITableViewCell {
     @IBOutlet var descripLabel: UILabel!
     @IBOutlet var favImageView: UIImageView!
     @IBOutlet var favButton: UIButton!
-    
-//    weak var delegate: CustomTableViewCellDelegate?
-//    var indexPath: IndexPath?
     
     var deleteButtonAction: (() -> Void)?
     

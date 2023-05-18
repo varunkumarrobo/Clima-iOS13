@@ -49,7 +49,7 @@ class WeatherViewController: UIViewController{
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     var secondVC = SecondVC()
-
+    
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("WeatherDB.plist")
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -132,20 +132,20 @@ class WeatherViewController: UIViewController{
     
     func segmentedControl()  {
         segmentedButtonControl.backgroundColor = .clear
-            segmentedButtonControl.tintColor = .clear
-            segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
-            segmentedButtonControl.layer.cornerRadius = 0
-            segmentedButtonControl.layer.borderWidth = 2
-            segmentedButtonControl.apportionsSegmentWidthsByContent = true
-            segmentedButtonControl.backgroundColor = .clear
-            segmentedButtonControl.setTitleTextAttributes([
-                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-                NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red
-            ], for: .selected)
-            segmentedButtonControl.setTitleTextAttributes([
-                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
-                NSAttributedString.Key.foregroundColor: UIColor.white
-            ], for: .normal)
+        segmentedButtonControl.tintColor = .clear
+        segmentedButtonControl.layer.borderColor = UIColor.white.cgColor
+        segmentedButtonControl.layer.cornerRadius = 0
+        segmentedButtonControl.layer.borderWidth = 2
+        segmentedButtonControl.apportionsSegmentWidthsByContent = true
+        segmentedButtonControl.backgroundColor = .clear
+        segmentedButtonControl.setTitleTextAttributes([
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+            NSAttributedString.Key.foregroundColor: UIColor(named: "#E32843") ?? .red
+        ], for: .selected)
+        segmentedButtonControl.setTitleTextAttributes([
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10, weight: .bold),
+            NSAttributedString.Key.foregroundColor: UIColor.white
+        ], for: .normal)
     }
     
     
@@ -171,32 +171,33 @@ class WeatherViewController: UIViewController{
     @IBAction func addToFav(_ sender: UIButton) {
         
         let newItem = WeatherDB(context: self.context)
-            newItem.place = cityLabel.text!
-            newItem.country = countryLabelSec.text!
-            
-            let existingItem = itemArray.first { item in
-                return item.place?.lowercased() == newItem.place?.lowercased() && item.country?.lowercased() == newItem.country?.lowercased()
-            }
-            
-            if existingItem == nil {
-                itemArray.append(newItem)
-                favoriteItems.append(newItem) // Keep favoriteItems in sync with itemArray
+        newItem.place = cityLabel.text!
+        newItem.country = countryLabelSec.text!
+        
+        let existingItem = itemArray.first {
+            item in
+            return item.place?.lowercased() == newItem.place?.lowercased() && item.country?.lowercased() == newItem.country?.lowercased()
+        }
+        
+        if existingItem == nil {
+            itemArray.append(newItem)
+            favoriteItems.append(newItem) // Keep favoriteItems in sync with itemArray
+            saveItems()
+            print("Item added to favorites")
+            sender.setTitle("Remove from favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        } else {
+            if let index = itemArray.firstIndex(where: { $0.place == newItem.place && $0.country == newItem.country }) {
+                let itemToRemove = itemArray[index]
+                favoriteItems.removeAll { $0.place == newItem.place && $0.country == newItem.country }
+                itemArray.remove(at: index)
+                context.delete(itemToRemove)
                 saveItems()
-                print("Item added to favorites")
-                sender.setTitle("Remove from favourite", for: .normal)
-                sender.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            } else {
-                if let index = itemArray.firstIndex(where: { $0.place == newItem.place && $0.country == newItem.country }) {
-                    let itemToRemove = itemArray[index]
-                    favoriteItems.removeAll { $0.place == newItem.place && $0.country == newItem.country }
-                    itemArray.remove(at: index)
-                    context.delete(itemToRemove)
-                    saveItems()
-                    print("Item removed from favorites")
-                }
-                sender.setTitle("Add to favourite", for: .normal)
-                sender.setImage(UIImage(systemName: "heart"), for: .normal)
+                print("Item removed from favorites")
             }
+            sender.setTitle("Add to favourite", for: .normal)
+            sender.setImage(UIImage(systemName: "heart"), for: .normal)
+        }
     }
     
     @objc func homeButtonTapped() {
@@ -214,7 +215,7 @@ class WeatherViewController: UIViewController{
         print("recentButtonTapped")
     }
     
-
+    
     func didTapMenuButton(){
         print("Pressed")
         drawerStatus = !drawerStatus
@@ -337,7 +338,7 @@ extension WeatherViewController : WeatherManagerDelegate {
             self.temperatureLabel.text = weather.tempratureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
             self.cityLabel.text = "\(weather.cityName)"
-            self.descriptionLabel.text = weather.description
+            self.descriptionLabel.text = weather.description.capitalized
             self.minMaxLabel.text = "\(weather.temp_min) - \(weather.temp_max)"
             self.humidityLabel.text = String(weather.humidity)
             self.feelsLikeLabel.text = String(weather.feels_like)
@@ -360,12 +361,11 @@ extension WeatherViewController : WeatherManagerDelegate {
     }
 }
 
-////MARK: - Image from api
+//MARK: - Image from api
 //extension WeatherViewController {
 //    func load(url: URL) {
 //        DispatchQueue.global().async {
-//            [weak self] in
-//            if let data = try? Data(contentsOf: url) {
+//            [weak self] in if let data = try? Data(contentsOf: url) {
 //                if let image = UIImage(data: data) {
 //                    DispatchQueue.main.async {
 //                        self?.conditionImageView.image = image
@@ -382,7 +382,6 @@ extension WeatherViewController : CountryDetailsDelegate {
     func didUpdateDetails(_ weatherManager: WeatherManager, details: CountryModel) {
         DispatchQueue.main.async {
             self.countryLabelSec.text = details.country
-            
             print(details.country)
         }
     }

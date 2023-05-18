@@ -49,7 +49,7 @@ struct SearchManager {
             let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
             let results = json["results"] as! [[String: Any]]
             for result in results {
-                print("result from search \(result)")
+//                print("result from search \(result)")
                 let text = result["text"]! as! [String:Any]
                 let name = text["primary"]! as! String
                 let geo = result["geo"]! as! [String:Any]

@@ -22,6 +22,7 @@ protocol CountryDetailsDelegate {
 struct WeatherManager {
     
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?&appid=e031dcd3ad8b42c64dce6e16089389d6&units=metric"
+    let weatherImageURL = "https://openweathermap.org/img/wn/"
     
     let suggestionsUrl = "https://api.foursquare.com/v3/autocomplete&types=geo"
     
@@ -135,8 +136,10 @@ struct WeatherManager {
             let decodedData = try decoder.decode(DetailsData.self, from: countryData)
             let countryName = decodedData.location.country
             let localtime = decodedData.location.localtime
+            let image = decodedData.current.condition.icon
             print("passing data in parJSON \(countryName)")
-            let details = CountryModel(country: countryName, localtime: localtime)
+            print("passing data in parJSON \(image)")
+            let details = CountryModel(country: countryName, localtime: localtime,icon: image)
             return details
         }catch {
             delegateSec?.didFailDetailsError(error: error)
