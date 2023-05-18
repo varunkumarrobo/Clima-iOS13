@@ -374,15 +374,15 @@ extension FavVC : WeatherManagerDelegate {
 extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searching {
             return isFavourtie ? filteredItems.count  : filteredRecents.count
         } else {
             return isFavourtie ? itemArray.count  : recentSearch.count
         }
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -395,14 +395,14 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         
         if searching {
             if isFavourtie {
-                let favoriteItem = filteredItems[indexPath.section]
+                let favoriteItem = filteredItems[indexPath.row]
                 cell.cityLabel.text = favoriteItem
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
                 cell.descripLabel.text = desc
                 // Configure the cell using favoriteItem properties
             } else {
-                let recentSearchItem = filteredRecents[indexPath.section]
+                let recentSearchItem = filteredRecents[indexPath.row]
                 cell.cityLabel.text = recentSearchItem
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
@@ -412,14 +412,14 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
             }
         } else {
             if isFavourtie {
-                let favoriteItem = itemArray[indexPath.section]
+                let favoriteItem = itemArray[indexPath.row]
                 cell.setNames(itemArray: favoriteItem)
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
                 cell.descripLabel.text = desc
                 // Configure the cell using favoriteItem properties
             } else {
-                let recentSearchItem = recentSearch[indexPath.section]
+                let recentSearchItem = recentSearch[indexPath.row]
                 cell.setSearchs(searchArray: recentSearchItem)
                 cell.favImaLabel.image = UIImage(systemName: image)
                 cell.tempLabel.text = temp
@@ -428,6 +428,10 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
                 // Configure the cell using recentSearchItem properties
             }
         }
+        
+        cell.deleteButtonAction = {
+                self.deleteItem(at: indexPath)
+            }
         
         cell.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         
@@ -450,7 +454,7 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
     //    }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.5
+        return 10
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -458,4 +462,47 @@ extension FavVC : UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate 
         return true
     }
     
+    func deleteItem(at indexPath: IndexPath) {
+        
+        tableView.beginUpdates()
+            
+            if isFavourtie {
+                if searching {
+//                    let favoriteItem = filteredItems[indexPath.row]
+//                    context.delete(favoriteItem)
+                    filteredItems.remove(at: indexPath.row)
+                } else {
+                    let favoriteItem = itemArray[indexPath.row]
+                    context.delete(favoriteItem)
+                    itemArray.remove(at: indexPath.row)
+                }
+            } else {
+                if searching {
+                    filteredRecents.remove(at: indexPath.row)
+                } else {
+                    let recentSearchItem = recentSearch[indexPath.row]
+                    context.delete(recentSearchItem)
+                    recentSearch.remove(at: indexPath.row)
+                }
+            }
+            
+            saveItems() // Save the changes to the database
+            
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            
+            tableView.endUpdates()
+            
+            // Reload the table view to update the data source
+            tableView.reloadData()
+        
+    }
+    
 }
+
+//extension FavVC: CustomTableViewCellDelegate {
+//    func customTableViewCell(_ cell: Cell, didTapDeleteAt indexPath: IndexPath) {
+//        // Perform the deletion logic here
+//        itemArray.remove(at: indexPath.row)
+//        tableView.deleteRows(at: [indexPath], with: .automatic)
+//    }
+//}

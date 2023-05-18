@@ -75,6 +75,7 @@ class WeatherViewController: UIViewController{
         loadDrawer()
         segmentedControl()
         
+        addToFav.addTarget(self, action: #selector(addToFav(_:)), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {

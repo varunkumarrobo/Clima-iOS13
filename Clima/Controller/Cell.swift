@@ -8,8 +8,12 @@
 
 import UIKit
 
+//protocol CustomTableViewCellDelegate: AnyObject {
+//    func customTableViewCell(_ cell: Cell, didTapDeleteAt indexPath: IndexPath)
+//}
+
 class Cell: UITableViewCell {
-    //    var weatherManager = WeatherManager()
+    
     
     @IBOutlet var cityLabel: UILabel!
     @IBOutlet var countryLabel: UILabel!
@@ -20,31 +24,37 @@ class Cell: UITableViewCell {
     @IBOutlet var favImageView: UIImageView!
     @IBOutlet var favButton: UIButton!
     
+//    weak var delegate: CustomTableViewCellDelegate?
+//    var indexPath: IndexPath?
+    
+    var deleteButtonAction: (() -> Void)?
     
     func setNames(itemArray: WeatherDB)  {
         cityLabel.text = "\(String(format: itemArray.place!)),"
         countryLabel.text = itemArray.country
     }
     
-    func setDetails(modelArray: WeatherModel){
-        tempLabel.text = String(modelArray.temp)
-        favImaLabel.image = UIImage(systemName: modelArray.conditionName)
-        descripLabel.text = modelArray.description
-    }
-    
     @IBAction func favButton(_ sender: UIButton) {
         print("Fav Button at Favourties Page..")
+        deleteButtonAction?()
     }
     
     func setSearchs(searchArray: RecentSearch)  {
-        cityLabel.text = "\(String(format: searchArray.searchPlace!))"
+        cityLabel.text = "\(String(format: (searchArray.searchPlace?.capitalized)!))"
         countryLabel.text = searchArray.searchCountry
     }
     
-    func setDetails(favImage: UIImage,temp: Array<String>,descrip: Array<String>)  {
-        favImaLabel.image = favImage
-        tempLabel.text = temp[0]
-        descripLabel.text = descrip[0]
-    } 
-    
 }
+
+
+//func setDetails(modelArray: WeatherModel){
+//    tempLabel.text = String(modelArray.temp)
+//    favImaLabel.image = UIImage(systemName: modelArray.conditionName)
+//    descripLabel.text = modelArray.description
+//}
+
+//func setDetails(favImage: UIImage,temp: Array<String>,descrip: Array<String>)  {
+//    favImaLabel.image = favImage
+//    tempLabel.text = temp[0]
+//    descripLabel.text = descrip[0]
+//}
