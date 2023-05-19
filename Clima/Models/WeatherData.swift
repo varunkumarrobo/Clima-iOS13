@@ -12,7 +12,8 @@ struct WeatherData : Codable {
     let name : String
     let main :  Main
     let weather : [Weather]
-    let timezone : Date
+    let timezone : Int
+    let dt : TimeInterval
     let sys : System
     let visibility : Int
 

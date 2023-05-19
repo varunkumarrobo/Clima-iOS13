@@ -467,36 +467,7 @@
                             <constraint firstItem="can-OR-uJU" firstAttribute="leading" secondItem="MQt-Ga-fcE" secondAttribute="leading" id="QGp-aK-DyH"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="aMQ-Ex-p0z">
-                        <rightBarButtonItems>
-                            <barButtonItem style="plain" id="xYR-mf-pzW">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="sZh-y6-lIX">
-                                    <rect key="frame" x="354" y="2.5" width="40" height="39"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="tintColor" systemColor="labelColor"/>
-                                    <state key="normal" backgroundImage="location.circle.fill" catalog="system"/>
-                                    <connections>
-                                        <action selector="currentLocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dji-Uk-qXG"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                            <barButtonItem style="plain" id="Noz-2a-iIL">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="pmd-Qd-NdG">
-                                    <rect key="frame" x="306" y="3" width="40" height="38"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="40" id="7Di-4F-xXX"/>
-                                        <constraint firstAttribute="width" constant="40" id="IV3-Bs-GMB"/>
-                                    </constraints>
-                                    <color key="tintColor" systemColor="labelColor"/>
-                                    <state key="normal" backgroundImage="magnifyingglass" catalog="system"/>
-                                    <connections>
-                                        <action selector="searchButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JOb-7I-tur"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                        </rightBarButtonItems>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="aMQ-Ex-p0z"/>
                     <connections>
                         <outlet property="addToFav" destination="hPQ-cg-DUR" id="Jpj-qp-blA"/>
                         <outlet property="backGroundTrailing" destination="rPn-81-Oqp" id="gye-Ml-ErA"/>
@@ -985,16 +956,12 @@
         <image name="icon_menu_white" width="18" height="12"/>
         <image name="icon_precipitation_info" width="39" height="38"/>
         <image name="icon_visibility_info" width="41" height="24"/>
-        <image name="location.circle.fill" catalog="system" width="128" height="123"/>
         <image name="logo" width="226" height="48"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="thermometer" catalog="system" width="80" height="128"/>
         <namedColor name="backGroundColor">
             <color red="0.47099998593330383" green="0.37700000405311584" blue="0.7630000114440918" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

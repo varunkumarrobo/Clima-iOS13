@@ -343,14 +343,34 @@ extension WeatherViewController : WeatherManagerDelegate {
             self.humidityLabel.text = String(weather.humidity)
             self.feelsLikeLabel.text = String(weather.feels_like)
             self.visibilityLabel.text = String(weather.visibility)
+            
+//            let date = Date(timeIntervalSince1970: weather.time)
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "yyyy-MM-dd"
+//            let formattedDate = dateFormatter.string(from: date)
+//            dateFormatter.dateFormat = "HH:mm:ss"
+//            let formattedTime = dateFormatter.string(from: date)
+//            print("Time:", formattedTime)
+//            print("Date:", formattedDate)
+//            self.timeLabel.text = "\(formattedTime)"
+            
+//            let utcDate = Date(timeIntervalSince1970: weather.time)
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "EEE, dd MMM yyyy hh:mm a"
+//            dateFormatter.timeZone = TimeZone(identifier: "UTC")
+//            let formattedDate = dateFormatter.string(from: utcDate)
+//            self.timeLabel.text = formattedDate.uppercased()
+            
+            
             let formatter = DateFormatter()
             formatter.dateFormat = "E, dd MMM yyyy hh:mm a"
             let currentTimeString = formatter.string(from: Date())
             print(currentTimeString)
+            
             self.timeLabel.text = currentTimeString
             self.fahrenheitTemp = (weather.temp * 9/5) + 32
             print("fahrenheitTemp : -  \(self.fahrenheitTemp)")
-            print(weather.timeString)
+//            print(weather.timeString)
             print(self.temperatureLabel.text!)
             print(self.descriptionLabel.text!)
         }

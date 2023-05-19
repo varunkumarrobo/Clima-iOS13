@@ -9,6 +9,7 @@
 import Foundation
 import CoreLocation
 
+
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager : WeatherManager, weather : WeatherModel)
     func didFailError(error : Error)
@@ -113,6 +114,8 @@ struct WeatherManager {
             let description = decodedData.weather[0].description
             let icon = decodedData.weather[0].icon
             let time = decodedData.timezone
+            let dt = decodedData.dt
+            
             print(time)
             let country = decodedData.sys.country
             let humidity = decodedData.main.humidity
@@ -120,7 +123,7 @@ struct WeatherManager {
             let minTemp = decodedData.main.temp_min
             let maxTemp = decodedData.main.temp_max
             let visibility = decodedData.visibility
-            let weather = WeatherModel(conditionId: id, cityName: cityname, temp: temp, description: description,icon: icon, time: time, countryCode: country,feels_like : feelsLike, temp_min: minTemp,temp_max: maxTemp,humidity: humidity, visibility: visibility)
+            let weather = WeatherModel(conditionId: id, cityName: cityname, temp: temp, description: description,icon: icon, time: dt, countryCode: country,feels_like : feelsLike, temp_min: minTemp,temp_max: maxTemp,humidity: humidity, visibility: visibility)
             print(weather)
             return weather
         } catch {

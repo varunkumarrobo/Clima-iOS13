@@ -15,7 +15,7 @@ struct WeatherModel {
     let temp : Double
     let description : String
     let icon : String
-    let time : Date
+    let time : TimeInterval
     let countryCode : String
     let feels_like : Double
     let temp_min : Double
@@ -27,9 +27,9 @@ struct WeatherModel {
         return String(format: "%.0f", temp)
     }
     
-    var timeString : Date {
-        return time
-    }
+//    var timeString : Date {
+//        return time
+//    }
     
     var conditionName : String {
         switch conditionId {
